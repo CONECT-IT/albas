@@ -5,6 +5,7 @@ declare module "#auth-utils" {
     name: string;
     phone?: string;
     hireDate?: string;
+    roles?: string[];
   }
 
   interface UserSession {

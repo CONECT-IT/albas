@@ -12,6 +12,7 @@
     "db:seed": "tsx --env-file=.env  tasks/seed.ts"
   },
   "devDependencies": {
+    "@nuxt/image": "^1.11.0",
     "@nuxt/ui": "^4.1.0",
     "@nuxthub/core": "^0.9.0",
     "nuxt": "^4.2.0",

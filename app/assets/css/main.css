@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+@theme static {
+    --color-dorado-primario: #ca9a2b;
+    --color-naranja-terciario: #fdedd4;
+}
