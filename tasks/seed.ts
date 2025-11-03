@@ -9,7 +9,11 @@ function hashPassword(password: string) {
   return salt.toString("base64") + "." + hash.toString("base64");
 }
 
-const sql = postgres(process.env.NUXT_POSTGRES_URL!, { ssl: false });
+const sql = postgres(process.env.NUXT_POSTGRES_URL!, {
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 async function seed() {
   console.log("🚀 Iniciando migración de datos...");

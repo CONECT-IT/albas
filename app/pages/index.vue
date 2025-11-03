@@ -20,21 +20,25 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-    layout: "auth",
-});
-
 const { loggedIn, user, fetch: fetchUser } = useUserSession();
 
-if (loggedIn.value) {
-    if (!user.value?.roles) {
-        await fetchUser();
-    }
+if (process.client) {
+    watch(
+        () => loggedIn.value,
+        async (isLoggedIn) => {
+            if (isLoggedIn) {
+                if (!user.value?.roles) {
+                    await fetchUser();
+                }
 
-    if (user.value?.roles?.includes("ADMINISTRADOR")) {
-        await navigateTo("/admin");
-    } else if (user.value?.roles?.includes("ASESOR_VENTAS")) {
-        await navigateTo("/asesor");
-    }
+                if (user.value?.roles?.includes("ADMINISTRADOR")) {
+                    await navigateTo("/admin");
+                } else if (user.value?.roles?.includes("ASESOR_VENTAS")) {
+                    await navigateTo("/asesor");
+                }
+            }
+        },
+        { immediate: true },
+    );
 }
 </script>
