@@ -1,4 +1,4 @@
-# 🚀 Proyecto Dashboard Administrativo - Nuxt.js
+# ALBAS
 
 Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4, TypeScript** y se conecta a una base de datos **PostgreSQL** (con soporte para Supabase). El proyecto incluye autenticación de usuarios con roles, gestión de leads, ventas y clientes, y está desplegado en **NuxtHub** con **Cloudflare** usando Workers.
 
