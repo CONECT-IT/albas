@@ -35,42 +35,52 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = usePostgres();
-  const [userData] = await db`
-    SELECT id_usuario, nombre_usuario, password_hash, nombres, apellidos, telefono, fecha_contratacion, activo
-    FROM usuarios
-    WHERE nombre_usuario = ${username} AND activo = true
+
+  const userWithRoles = await db`
+    SELECT
+      u.id_usuario,
+      u.nombre_usuario,
+      u.password_hash,
+      u.nombres,
+      u.apellidos,
+      u.telefono,
+      u.fecha_contratacion,
+      u.activo,
+      u.last_login,
+      array_agg(r.nombre_rol) FILTER (WHERE r.nombre_rol IS NOT NULL) AS roles
+    FROM usuarios u
+    LEFT JOIN usuario_roles ur ON u.id_usuario = ur.id_usuario
+    LEFT JOIN roles r ON ur.id_rol = r.id_rol
+    WHERE u.nombre_usuario = ${username} AND u.activo = true
+    GROUP BY u.id_usuario, u.nombre_usuario, u.password_hash, u.nombres, u.apellidos, u.telefono, u.fecha_contratacion, u.activo, u.last_login
   `.values();
 
-  if (!userData) {
+  if (!userWithRoles || userWithRoles.length === 0) {
+    await db.end();
     throw createError({
       statusCode: 401,
       message: "Credenciales inválidas",
     });
   }
 
+  const userData = userWithRoles[0];
   const isValidPassword = verifyPassword(userData[2], password);
 
   if (!isValidPassword) {
+    await db.end();
     throw createError({
       statusCode: 401,
       message: "Credenciales inválidas",
     });
   }
-
-  const userRoles = await db`
-    SELECT r.nombre_rol
-    FROM usuario_roles ur
-    JOIN roles r ON ur.id_rol = r.id_rol
-    WHERE ur.id_usuario = ${userData[0]}
-  `.values();
-
-  const roles = userRoles.map((role) => role[0]);
 
   await db`
     UPDATE usuarios
     SET last_login = NOW()
     WHERE id_usuario = ${userData[0]}
   `;
+
+  const roles = userData[9] || [];
 
   await setUserSession(event, {
     user: {
@@ -79,7 +89,7 @@ export default defineEventHandler(async (event) => {
       name: `${userData[3]} ${userData[4]}`, // nombres + apellidos
       phone: userData[5], // telefono
       hireDate: userData[6], // fecha_contratacion
-      roles: roles,
+      roles: Array.isArray(roles) ? roles : [],
     },
     loggedInAt: new Date(),
   });
@@ -93,7 +103,7 @@ export default defineEventHandler(async (event) => {
       id: userData[0],
       username: userData[1],
       name: `${userData[3]} ${userData[4]}`,
-      roles: roles,
+      roles: Array.isArray(roles) ? roles : [],
     },
   };
 });

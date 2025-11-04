@@ -10,9 +10,7 @@ function hashPassword(password: string) {
 }
 
 const sql = postgres(process.env.NUXT_POSTGRES_URL!, {
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: false,
 });
 
 async function seed() {
