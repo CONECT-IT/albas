@@ -13,7 +13,7 @@
                     <div class="flex space-x-6 text-negro-primario">
                         <NuxtLink
                             to="/admin/asesores"
-                            class="relative px-4 py-2 hover:text-gray-300 transition-colors duration-200"
+                            class="relative px-4 py-2 hover:text-black transition-colors duration-200"
                         >
                             asesores
                             <span
