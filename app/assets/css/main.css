@@ -4,4 +4,6 @@
 @theme static {
     --color-dorado-primario: #ca9a2b;
     --color-naranja-terciario: #fdedd4;
+    --color-negro-secundario: #303030;
+    --color-negro-primario: #000000;
 }

@@ -46,6 +46,6 @@ const { user, clear } = useUserSession();
 const handleLogout = async () => {
     await $fetch("/api/auth/logout", { method: "POST" });
     await clear();
-    await navigateTo("/login");
+    await navigateTo("/");
 };
 </script>
