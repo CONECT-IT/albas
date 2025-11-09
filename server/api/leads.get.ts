@@ -1,35 +1,77 @@
 import { usePostgres } from "#imports";
 
 export default defineEventHandler(async (event) => {
+  const session = await getUserSession(event);
+  const user = session?.user;
+
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      message: "No autenticado",
+    });
+  }
+
   const db = usePostgres();
 
   try {
-    const leads = await db`
-      SELECT 
-        l.id_persona, 
-        p.nombre, 
-        le.nombre_estado,
-        i.tipo_interaccion, 
-        i.fecha_hora
-      FROM leads l
-      INNER JOIN lead_estados le ON l.id_estado = le.id_estado
-      INNER JOIN personas p ON l.id_persona = p.id_persona
-      LEFT JOIN LATERAL (
-        SELECT 
-          tipo_interaccion, 
-          fecha_hora
-        FROM interacciones
-        WHERE id_lead = l.id_persona
-        ORDER BY fecha_hora DESC
-        LIMIT 1
-      ) i ON true
-       `.values();
+    let leads;
+
+    const hasAdminRole = user.roles.some(
+      (role) =>
+        role.toLowerCase() === "administrador" ||
+        role.toLowerCase() === "admin" ||
+        role.toLowerCase() === "administrador/a",
+    );
+
+    if (hasAdminRole) {
+      leads = await db`
+        SELECT
+          p.id_persona,
+          p.nombre,
+          p.tipo,
+          p.celular,
+          p.estado,
+          u.nombre_usuario,
+          u.nombres,
+          u.apellidos
+        FROM personas p
+        LEFT JOIN citas c ON p.id_persona = c.id_persona
+        LEFT JOIN usuarios u ON c.id_usuario = u.id_usuario
+         `.values();
+    } else {
+      leads = await db`
+        SELECT
+          p.id_persona,
+          p.nombre,
+          p.tipo,
+          p.celular,
+          p.estado,
+          u.nombre_usuario,
+          u.nombres,
+          u.apellidos
+        FROM personas p
+        INNER JOIN citas c ON p.id_persona = c.id_persona
+        INNER JOIN usuarios u ON c.id_usuario = u.id_usuario
+        WHERE c.id_usuario = ${user.id}
+         `.values();
+    }
+
     return {
       status: "success",
       message: "Leads retornados correctamente",
-      data: leads
+      data: leads.map((lead) => ({
+        id_persona: lead[0],
+        nombre: lead[1],
+        tipo: lead[2],
+        celular: lead[3],
+        estado: lead[4],
+        asesor: {
+          nombre_usuario: lead[5],
+          nombres: lead[6],
+          apellidos: lead[7],
+        },
+      })),
     };
-
   } catch (error) {
     console.error("[ERROR] Error obteniendo leads:", error);
     throw createError({

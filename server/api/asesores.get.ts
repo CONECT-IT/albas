@@ -1,34 +1,54 @@
 import { usePostgres } from "#imports";
 
 export default defineEventHandler(async (event) => {
+  const session = await getUserSession(event);
+  const user = session?.user;
+
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      message: "No autenticado",
+    });
+  }
+
+  const hasAdminRole = user.roles.some(
+    (role) =>
+      role.toLowerCase() === "administrador" ||
+      role.toLowerCase() === "admin" ||
+      role.toLowerCase() === "administrador/a",
+  );
+
+  if (!hasAdminRole) {
+    throw createError({
+      statusCode: 403,
+      message: "Acceso denegado. Requiere rol de administrador",
+    });
+  }
+
   const db = usePostgres();
   try {
     const asesores = await db`
-      SELECT 
-        u.id_usuario, 
+      SELECT
+        u.id_usuario,
+        u.nombre_usuario,
         u.nombres,
         u.apellidos,
-        i.tipo_interaccion, 
-        i.fecha_hora
-      FROM usuarios u 
-      INNER JOIN usuario_roles ur ON u.id_usuario = ur.id_usuario
-      INNER JOIN roles r ON ur.id_rol = r.id_rol
-      LEFT JOIN LATERAL (
-        SELECT 
-          tipo_interaccion, 
-          fecha_hora
-        FROM interacciones
-        WHERE id_usuario_asesor = u.id_usuario
-        ORDER BY fecha_hora DESC
-        LIMIT 1
-      ) i ON true
-      WHERE r.nombre_rol = 'ASESOR_VENTAS'
+        u.correo
+      FROM usuarios u
+      INNER JOIN rol r ON u.id_rol = r.id_rol
+      WHERE r.nombre_rol = 'Asesor'
        `.values();
-    await db.end();
+
     return {
       status: "success",
       message: "Asesores retornados correctamente",
-      data: asesores
+      data: asesores.map((asesor) => ({
+        id_usuario: asesor[0],
+        nombre_usuario: asesor[1],
+        nombres: asesor[2],
+        apellidos: asesor[3],
+        correo: asesor[4],
+      })),
     };
   } catch (error) {
     console.error("[ERROR] Error obteniendo asesores:", error);
