@@ -5,7 +5,7 @@
 <script setup lang="ts">
 definePageMeta({
     middleware: "auth",
-    requiredRoles: ["ASESOR_VENTAS"],
-    layout: "dashboard",
+    requiredRoles: ["Asesor"],
+    layout: "lead",
 });
 </script>

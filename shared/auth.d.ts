@@ -3,8 +3,6 @@ declare module "#auth-utils" {
     id: number;
     username: string;
     name: string;
-    phone?: string;
-    hireDate?: string;
     roles?: string[];
   }
 

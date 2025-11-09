@@ -17,25 +17,27 @@ async function seed() {
   console.log("🚀 Iniciando migración de datos...");
 
   const seedSqlPath = path.resolve("./sql/seed.sql");
-  const rawSql = fs.readFileSync(seedSqlPath, "utf-8");
+  const rawSql = fs.readFileSync(seedSqlPath, "utf8");
 
   await sql.unsafe(rawSql);
 
-  const adminUser = {
-    username: "william_admin",
-    password: hashPassword("admin123"),
-    nombres: "William",
-    apellidos: "Vargas",
-    telefono: "987654321",
-  };
-
-  await sql`
-    UPDATE usuarios
-    SET password_hash = ${adminUser.password}
-    WHERE nombre_usuario = ${adminUser.username}
+  const plainPasswordUsers = await sql`
+    SELECT id_usuario, contrasena 
+    FROM usuarios 
+    WHERE contrasena NOT LIKE '$2a$%'
   `;
 
-  console.log("[OK] Datos base insertados y usuario admin hasheado.");
+  for (const user of plainPasswordUsers) {
+    const hashedPassword = hashPassword(user.contrasena);
+    
+    await sql`
+      UPDATE usuarios
+      SET contrasena = ${hashedPassword}
+      WHERE id_usuario = ${user.id_usuario}
+    `;
+  }
+
+  console.log("[OK] Datos base insertados y contraseñas de usuarios hasheadas.");
   await sql.end();
 }
 
