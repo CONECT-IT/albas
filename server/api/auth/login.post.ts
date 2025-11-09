@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
     await db.end();
     throw createError({
       statusCode: 401,
-      message: "Credenciales inválidas",
+      message: "Usuario no encontrado",
     });
   }
 
@@ -66,7 +66,7 @@ export default defineEventHandler(async (event) => {
     await db.end();
     throw createError({
       statusCode: 401,
-      message: "Credenciales inválidas",
+      message: "Contraseña incorrecta",
     });
   }
 

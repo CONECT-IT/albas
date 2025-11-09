@@ -175,7 +175,13 @@ const handleLogin = async () => {
 
         await fetchUser();
     } catch (err: any) {
-        error.value = err.message || "Error al iniciar sesión";
+        if (err.data && err.data.message) {
+            error.value = err.data.message;
+        } else if (err.message) {
+            error.value = err.message;
+        } else {
+            error.value = "Error al iniciar sesión";
+        }
     } finally {
         loading.value = false;
     }
