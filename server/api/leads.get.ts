@@ -1,32 +1,42 @@
-// Retorna una lista de leads desde la base de datos, obteniendo: nombre completo, edad, pais y ciudad, ultima actividad, estado, estadisticas, fdp
-//endpoint: /api/leads [GET]
 import { usePostgres } from "#imports";
 
 export default defineEventHandler(async (event) => {
-
   const db = usePostgres();
-  const leads = await db`
-    select l.id_persona, p.nombre, le.nombre_estado
-    from leads l
-    inner join lead_estados le on l.id_estado = le.id_estado
-    inner join personas p on l.id_persona = p.id_persona
-    `.values();
-    for (let i = 0; i < leads.length; i++) {
-        const lead = leads[i];
-        const id_persona = lead[0];
-        const ultimaInteraccion = await db`
-        select i.tipo_interaccion, i.fecha_hora
-        from interacciones i
-        where i.id_persona_lead = ${id_persona}
-        order by i.fecha_hora desc
-        limit 1
-        `.values();
-        lead.push(ultimaInteraccion.length > 0 ? ultimaInteraccion[0] : null);
-    }
-    await db.end();
+
+  try {
+    const leads = await db`
+      SELECT 
+        l.id_persona, 
+        p.nombre, 
+        le.nombre_estado,
+        i.tipo_interaccion, 
+        i.fecha_hora
+      FROM leads l
+      INNER JOIN lead_estados le ON l.id_estado = le.id_estado
+      INNER JOIN personas p ON l.id_persona = p.id_persona
+      LEFT JOIN LATERAL (
+        SELECT 
+          tipo_interaccion, 
+          fecha_hora
+        FROM interacciones
+        WHERE id_lead = l.id_persona
+        ORDER BY fecha_hora DESC
+        LIMIT 1
+      ) i ON true
+       `.values();
     return {
-    status: "success",
-    message: "Leads retornados correctamente",
-    data: leads
-  };
+      status: "success",
+      message: "Leads retornados correctamente",
+      data: leads
+    };
+
+  } catch (error) {
+    console.error("[ERROR] Error obteniendo leads:", error);
+    throw createError({
+      statusCode: 500,
+      message: "Error interno del servidor",
+    });
+  } finally {
+    await db.end();
+  }
 });
