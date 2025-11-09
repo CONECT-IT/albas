@@ -6,7 +6,7 @@ import path from "node:path";
 function hashPassword(password: string) {
   const salt = randomBytes(16);
   const hash = scryptSync(password, salt, 64);
-  return "$2a$10$" + salt.toString("base64") + "." + hash.toString("base64");
+  return salt.toString("base64") + "." + hash.toString("base64");
 }
 
 const sql = postgres(process.env.NUXT_POSTGRES_URL!, {
@@ -21,11 +21,6 @@ async function seed() {
 
   await sql.unsafe(rawSql);
 
-  // Asegurar que las contraseñas estén en el formato adecuado para bcrypt
-  // Las contraseñas ya están hasheadas en el script SQL con el formato adecuado
-  // Solo actualizaremos las contraseñas que no tengan el formato bcrypt correcto
-
-  // Obtener usuarios cuyas contraseñas no tengan el formato bcrypt
   const plainPasswordUsers = await sql`
     SELECT id_usuario, contrasena 
     FROM usuarios 
