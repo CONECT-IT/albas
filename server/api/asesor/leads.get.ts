@@ -1,21 +1,16 @@
+import { requireAuth } from "../../utils/auth";
 import { usePostgres } from "#imports";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-  const user = session?.user;
+  await requireAuth()(event);
 
-  if (!user) {
-    throw createError({
-      statusCode: 401,
-      message: "No autenticado",
-    });
-  }
+  const user = event.context.user;
 
   const db = usePostgres();
 
   try {
     let leads;
-
+    //!TODO: Mover a una ruta especifica para admins y dejar solo lo necesario para asesores
     const hasAdminRole = user.roles.some(
       (role) =>
         role.toLowerCase() === "administrador" ||

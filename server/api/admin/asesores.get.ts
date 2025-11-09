@@ -1,29 +1,10 @@
+import { requireRole } from "../../utils/auth";
 import { usePostgres } from "#imports";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-  const user = session?.user;
+  await requireRole(["Administrador", "admin", "administrador/a"])(event);
 
-  if (!user) {
-    throw createError({
-      statusCode: 401,
-      message: "No autenticado",
-    });
-  }
-
-  const hasAdminRole = user.roles.some(
-    (role) =>
-      role.toLowerCase() === "administrador" ||
-      role.toLowerCase() === "admin" ||
-      role.toLowerCase() === "administrador/a",
-  );
-
-  if (!hasAdminRole) {
-    throw createError({
-      statusCode: 403,
-      message: "Acceso denegado. Requiere rol de administrador",
-    });
-  }
+  const user = event.context.user;
 
   const db = usePostgres();
   try {
