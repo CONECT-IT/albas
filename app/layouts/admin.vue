@@ -104,8 +104,10 @@
 const { user, clear } = useUserSession();
 
 const handleLogout = async () => {
-    await $fetch("/api/auth/logout", { method: "POST" });
-    await clear();
-    await navigateTo("/");
+    if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+        await $fetch("/api/auth/logout", { method: "POST" });
+        await clear();
+        await navigateTo("/");
+    }
 };
 </script>
