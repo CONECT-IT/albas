@@ -1,61 +1,40 @@
-INSERT INTO roles (nombre_rol) VALUES
-('ADMINISTRADOR'),
-('ASESOR_VENTAS');
+INSERT INTO rol (nombre_rol) VALUES 
+('Administrador'), ('Asesor'), ('Vendedor');
 
-INSERT INTO lead_estados (nombre_estado) VALUES
-('NUEVO'),
-('CONTACTADO'),
-('NEGOCIACION'),
-('CERRADO_EXITOSO'),
-('CERRADO_FALLIDO');
+INSERT INTO usuarios (nombre_usuario, contrasena, correo, nombres, apellidos, id_rol) VALUES 
+('admin', 'hash_admin', 'admin@inmobiliaria.com', 'Admin', 'Principal', 1),
+('asesor1', 'hash_asesor', 'asesor1@inmobiliaria.com', 'Juan', 'Pérez', 2),
+('vendedor1', 'hash_vendedor', 'vendedor1@inmobiliaria.com', 'María', 'Gómez', 3);
 
-INSERT INTO usuarios (nombre_usuario, password_hash, nombres, apellidos, telefono, fecha_contratacion, activo) VALUES
-('william_admin', 'hash_dummy_admin', 'William', 'Vargas', '987654321', '2023-01-15', TRUE),
-('pablo_asesor', 'hash_dummy_asesor1', 'Pablo', 'Gonzalez', '999123456', '2024-03-01', TRUE),
-('katherine_asesora', 'hash_dummy_asesor2', 'Katherine', 'Navas', '988777666', '2024-05-20', TRUE);
+UPDATE usuarios SET id_supervisor = 1 WHERE id_usuario = 2;
 
-INSERT INTO usuario_roles (id_usuario, id_rol) VALUES
-(1, (SELECT id_rol FROM roles WHERE nombre_rol = 'ADMINISTRADOR')),
-(1, (SELECT id_rol FROM roles WHERE nombre_rol = 'ASESOR_VENTAS')),
-(2, (SELECT id_rol FROM roles WHERE nombre_rol = 'ASESOR_VENTAS')),
-(3, (SELECT id_rol FROM roles WHERE nombre_rol = 'ASESOR_VENTAS'));
+INSERT INTO categoria_persona (nombre_rol) VALUES 
+('Cliente Potencial'), ('Propietario'), ('Vendedor Externo');
 
-INSERT INTO personas (nombre, fecha_registro, id_usuario_registro) VALUES
-('Interesado Carlos Soto', '2025-10-25', (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'pablo_asesor'));
+INSERT INTO personas (nombre, celular, edad, tipo, estado, fecha_captacion) VALUES 
+('Carlos López', '123456789', 35, 'Cliente', 'Activo', '2023-01-15'),
+('Ana Martínez', '987654321', 42, 'Propietario', 'Activo', '2023-02-20');
 
-INSERT INTO leads (id_persona, id_estado, id_usuario_asignado) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Interesado Carlos Soto'),
- (SELECT id_estado FROM lead_estados WHERE nombre_estado = 'NEGOCIACION'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'pablo_asesor'));
+INSERT INTO persona_categoria (id_persona, id_categoria) VALUES 
+(1, 1), (2, 2);
 
-INSERT INTO personas (nombre, fecha_registro, id_usuario_registro) VALUES
-('Cliente Laura Pérez', '2024-08-01', (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'william_admin'));
+INSERT INTO propiedad (direccion, descripcion, medidas, servicios_basicos, precio_negociable, partida_registral) VALUES 
+('Calle Falsa 123', 'Casa de 3 habitaciones', '120 m²', 'Agua, Luz', 250000.00, 'PR-2023-001');
 
-INSERT INTO leads (id_persona, id_estado, id_usuario_asignado) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Cliente Laura Pérez'),
- (SELECT id_estado FROM lead_estados WHERE nombre_estado = 'CERRADO_EXITOSO'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'william_admin'));
+INSERT INTO contrato (fecha_emision, id_propiedad) VALUES 
+('2023-03-10', 1);
 
- INSERT INTO clientes (id_persona, contrato_cantidad) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Cliente Laura Pérez'), 150000.00);
+INSERT INTO interesado (id_propiedad, id_persona, vendido, estado_comprador, separado) VALUES 
+(1, 1, FALSE, 'Interesado', TRUE);
 
-INSERT INTO ventas_cerradas (id_lead, id_usuario_cierre, monto_final, fecha_cierre, comision_asesor) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Cliente Laura Pérez'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'william_admin'),
- 150000.00,
- '2024-09-10',
- 1.50);
+INSERT INTO propiedad_asesor (id_propiedad, id_usuario) VALUES 
+(1, 2);
 
+INSERT INTO citas (fecha_agendada, observacion, estado_visita_guiada, id_persona, id_usuario) VALUES 
+('2023-03-15 10:00:00', 'Visita guiada programada', 'Pendiente', 1, 2);
 
-INSERT INTO interacciones (id_lead, id_usuario_asesor, tipo_interaccion, fecha_hora, notas) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Interesado Carlos Soto'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'pablo_asesor'),
- 'Llamada',
- '2025-10-26 10:00:00',
- 'Presentación de propuesta. Cliente solicitó revisar financiamiento.'),
+INSERT INTO usuario_vendedor (id_usuario, id_persona, estado_vendedor) VALUES 
+(3, 1, 'Activo');
 
-((SELECT id_persona FROM personas WHERE nombre = 'Interesado Carlos Soto'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'pablo_asesor'),
- 'Email',
- '2025-10-28 15:30:00',
- 'Envío de tabla de amortización. Cliente confirma interés.');
+INSERT INTO firma (id_contrato, id_persona) VALUES 
+(1, 1);
