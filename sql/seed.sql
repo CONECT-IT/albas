@@ -13,7 +13,7 @@ INSERT INTO personas (nombre, celular, tipo, fecha_captacion) VALUES
 ('Reynaldo Jhon',      '952604870', 'Lead Alvas', '2025-09-03'),
 ('René Lupaca',        '918258270', 'Lead Alvas', '2025-09-02'),
 ('Diego',              '983819894', 'Lead Alvas', '2025-09-01'),
-('Sin nombre (959)',   '959483073', 'Lead Alvas', '2025-09-01'),
+('German',   '959483073', 'Lead Alvas', '2025-09-01'),
 ('Luis Rodríguez',     '929769574', 'Lead Alvas', '2025-09-03'),
 ('Fernando Abel',      '985730695', 'Lead Alvas', '2025-08-26'),
 ('Ares',               '968968118', 'Lead Alvas', '2025-08-25'),
@@ -27,13 +27,11 @@ INSERT INTO personas (nombre, celular, tipo, fecha_captacion) VALUES
 ('Juan Cáceres',       '952893505', 'Lead Alvas', '2025-09-23'),
 ('Ever Calizaya',      '915911982', 'Lead Alvas', '2025-09-29');
 
--- Categorías
 INSERT INTO persona_categoria (id_persona, id_categoria)
 SELECT id_persona, 2 FROM personas; 
 
 INSERT INTO persona_categoria (id_persona, id_categoria) VALUES (3, 1);
 
--- Propiedades
 INSERT INTO propiedad (direccion, descripcion, medidas, servicios_basicos, precio_negociable, partida_registral) VALUES 
 ('Av. Industrial Nº 259-B - Tacna', 'Terreno con servicios', '20.5 x 6 = 123 m²', 'Luz, Agua, Desagüe', 330000.00, 'PR-259-B-TAC'),
 ('Sector 25 Viñani Mz.12 Lt.16 - Gal', 'Terreno sin servicios', '19.2 x 8 = 153.6 m²', 'Por solicitar', 28000.00, 'PR-MZ12-LT16');
