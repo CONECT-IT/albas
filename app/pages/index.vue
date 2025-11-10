@@ -145,9 +145,9 @@ if (loggedIn.value) {
         await fetchUser();
     }
 
-    if (user.value?.roles?.includes("ADMINISTRADOR")) {
+    if (user.value?.roles?.includes("Administrador")) {
         await navigateTo("/admin");
-    } else if (user.value?.roles?.includes("ASESOR_VENTAS")) {
+    } else if (user.value?.roles?.includes("Asesor")) {
         await navigateTo("/asesor");
     } else {
         await navigateTo("/");
@@ -174,16 +174,14 @@ const handleLogin = async () => {
         });
 
         await fetchUser();
-
-        if (user.value?.roles?.includes("ADMINISTRADOR")) {
-            await navigateTo("/admin");
-        } else if (user.value?.roles?.includes("ASESOR_VENTAS")) {
-            await navigateTo("/asesor");
-        } else {
-            await navigateTo("/");
-        }
     } catch (err: any) {
-        error.value = err.message || "Error al iniciar sesión";
+        if (err.data && err.data.message) {
+            error.value = err.data.message;
+        } else if (err.message) {
+            error.value = err.message;
+        } else {
+            error.value = "Error al iniciar sesión";
+        }
     } finally {
         loading.value = false;
     }
