@@ -3,8 +3,8 @@ INSERT INTO rol (nombre_rol) VALUES
 
 INSERT INTO usuarios (nombre_usuario, contrasena, correo, nombres, apellidos, id_rol) VALUES 
 ('admin_jefe', 'hash123', 'jefe@alvas.com', 'Carlos', 'Mendoza', 1),
-('asesor_golfer', 'hash123', 'golfer@alvas.com', 'Golfer', 'Rivas', 2);
-('admin', 'hash123', 'admin@alvas.com', 'Admin', 'Sistema', 3),
+('asesor_golfer', 'hash123', 'golfer@alvas.com', 'Golfer', 'Rivas', 2),
+('admin', 'hash123', 'admin@alvas.com', 'Admin', 'Sistema', 1),
 
 INSERT INTO categoria_persona (nombre_rol) VALUES 
 ('Vendedor'), ('Comprador');
