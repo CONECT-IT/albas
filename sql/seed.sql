@@ -21,7 +21,7 @@ INSERT INTO personas (nombre, celular, tipo, fecha_captacion) VALUES
 ('Ruth',               '901305949', 'Lead Alvas', '2025-09-15'),
 ('Jorge Campos',       '963026623', 'Lead Alvas', '2025-09-16'),
 ('Serapio Choquecota','963286758', 'Lead Alvas', '2025-09-19'),
-('Lerman',             '95355757',  'Lead Alvas', '2025-09-22'),
+('Lerman',             '953557571',  'Lead Alvas', '2025-09-22'),
 ('Construye Inmob.',   '916330916', 'Lead Alvas', '2025-09-22'),
 ('Nicanor',            '944500881', 'Lead Alvas', '2025-09-22'),
 ('Juan Cáceres',       '952893505', 'Lead Alvas', '2025-09-23'),
@@ -47,7 +47,6 @@ INSERT INTO citas (fecha_agendada, observacion, estado_visita_guiada, id_persona
 ('2025-09-30 11:00:00', 'No asistió a la cita programada', 'No realizó visita', 16, 2);
 
 INSERT INTO interesado (id_propiedad, id_persona, estado_comprador, separado) VALUES 
-
 (1, 1, 'Agendó visita guiada', TRUE),  
 (1, 2, 'No está interesado', FALSE),  
 (1, 8, 'Esperando respuesta', FALSE), 
