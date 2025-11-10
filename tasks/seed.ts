@@ -31,7 +31,7 @@ async function seed() {
 
   await sql`
     UPDATE usuarios
-    SET password_hash = ${adminUser.password}
+    SET contrasena = ${adminUser.password}
     WHERE nombre_usuario = ${adminUser.username}
   `;
 
