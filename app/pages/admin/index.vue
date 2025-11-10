@@ -9,7 +9,7 @@
 <script setup lang="ts">
 definePageMeta({
     middleware: "auth",
-    requiredRoles: ["ADMINISTRADOR"],
+    requiredRoles: ["Administrador"],
     layout: "admin",
 });
 </script>

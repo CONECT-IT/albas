@@ -40,26 +40,22 @@ export default defineEventHandler(async (event) => {
     SELECT
       u.id_usuario,
       u.nombre_usuario,
-      u.password_hash,
+      u.contrasena,
       u.nombres,
       u.apellidos,
-      u.telefono,
-      u.fecha_contratacion,
-      u.activo,
-      u.last_login,
-      array_agg(r.nombre_rol) FILTER (WHERE r.nombre_rol IS NOT NULL) AS roles
+      u.correo,
+      u.estado,
+      r.nombre_rol
     FROM usuarios u
-    LEFT JOIN usuario_roles ur ON u.id_usuario = ur.id_usuario
-    LEFT JOIN roles r ON ur.id_rol = r.id_rol
-    WHERE u.nombre_usuario = ${username} AND u.activo = true
-    GROUP BY u.id_usuario, u.nombre_usuario, u.password_hash, u.nombres, u.apellidos, u.telefono, u.fecha_contratacion, u.activo, u.last_login
+    LEFT JOIN rol r ON u.id_rol = r.id_rol
+    WHERE u.nombre_usuario = ${username} AND u.estado = true
   `.values();
 
   if (!userWithRoles || userWithRoles.length === 0) {
     await db.end();
     throw createError({
       statusCode: 401,
-      message: "Credenciales inválidas",
+      message: "Usuario no encontrado",
     });
   }
 
@@ -70,26 +66,20 @@ export default defineEventHandler(async (event) => {
     await db.end();
     throw createError({
       statusCode: 401,
-      message: "Credenciales inválidas",
+      message: "Contraseña incorrecta",
     });
   }
 
-  await db`
-    UPDATE usuarios
-    SET last_login = NOW()
-    WHERE id_usuario = ${userData[0]}
-  `;
-
-  const roles = userData[9] || [];
+  const roles = userData[7] ? [userData[7]] : [];
 
   await setUserSession(event, {
     user: {
       id: userData[0], // id_usuario
       username: userData[1], // nombre_usuario
       name: `${userData[3]} ${userData[4]}`, // nombres + apellidos
-      phone: userData[5], // telefono
-      hireDate: userData[6], // fecha_contratacion
-      roles: Array.isArray(roles) ? roles : [],
+      phone: undefined,
+      hireDate: undefined,
+      roles,
     },
     loggedInAt: new Date(),
   });
@@ -103,7 +93,7 @@ export default defineEventHandler(async (event) => {
       id: userData[0],
       username: userData[1],
       name: `${userData[3]} ${userData[4]}`,
-      roles: Array.isArray(roles) ? roles : [],
+      roles,
     },
   };
 });

@@ -41,16 +41,6 @@
                                 class="absolute bottom-0 left-0 w-full h-0.5 bg-white"
                             ></span>
                         </NuxtLink>
-                        <NuxtLink
-                            to="/admin/landing"
-                            class="relative px-4 py-2 hover:text-gray-300 transition-colors duration-200"
-                        >
-                            landing
-                            <span
-                                v-if="$route.path === '/admin/landing'"
-                                class="absolute bottom-0 left-0 w-full h-0.5 bg-white"
-                            ></span>
-                        </NuxtLink>
                     </div>
                     <div
                         class="flex ml-3 items-center bg-dorado-terciario rounded-4xl p-4"
