@@ -9,7 +9,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "db:migrate": "tsx --env-file=.env  tasks/migrate.ts",
-    "db:seed": "tsx --env-file=.env  tasks/seed.ts"
+    "db:seed": "tsx --env-file=.env  tasks/seed.ts",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@nuxt/image": "^1.11.0",
