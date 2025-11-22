@@ -1,61 +1,66 @@
-INSERT INTO roles (nombre_rol) VALUES
-('ADMINISTRADOR'),
-('ASESOR_VENTAS');
+INSERT INTO rol (nombre_rol) VALUES 
+('Administrador'), ('Asesor');
 
-INSERT INTO lead_estados (nombre_estado) VALUES
-('NUEVO'),
-('CONTACTADO'),
-('NEGOCIACION'),
-('CERRADO_EXITOSO'),
-('CERRADO_FALLIDO');
+INSERT INTO usuarios (nombre_usuario, contrasena, correo, nombres, apellidos, id_rol) VALUES 
+('admin_jefe', 'hash123', 'jefe@alvas.com', 'Carlos', 'Mendoza', 1),
+('asesor_golfer', 'hash123', 'golfer@alvas.com', 'Golfer', 'Rivas', 2),
+('admin', 'hash123', 'admin@alvas.com', 'Admin', 'Sistema', 1);
 
-INSERT INTO usuarios (nombre_usuario, password_hash, nombres, apellidos, telefono, fecha_contratacion, activo) VALUES
-('william_admin', 'hash_dummy_admin', 'William', 'Vargas', '987654321', '2023-01-15', TRUE),
-('pablo_asesor', 'hash_dummy_asesor1', 'Pablo', 'Gonzalez', '999123456', '2024-03-01', TRUE),
-('katherine_asesora', 'hash_dummy_asesor2', 'Katherine', 'Navas', '988777666', '2024-05-20', TRUE);
+INSERT INTO categoria_persona (nombre_rol) VALUES 
+('Vendedor'), ('Comprador');
 
-INSERT INTO usuario_roles (id_usuario, id_rol) VALUES
-(1, (SELECT id_rol FROM roles WHERE nombre_rol = 'ADMINISTRADOR')),
-(1, (SELECT id_rol FROM roles WHERE nombre_rol = 'ASESOR_VENTAS')),
-(2, (SELECT id_rol FROM roles WHERE nombre_rol = 'ASESOR_VENTAS')),
-(3, (SELECT id_rol FROM roles WHERE nombre_rol = 'ASESOR_VENTAS'));
+INSERT INTO personas (nombre, celular, tipo, fecha_captacion) VALUES 
+('Reynaldo Jhon',      '952604870', 'Lead Alvas', '2025-09-03'),
+('René Lupaca',        '918258270', 'Lead Alvas', '2025-09-02'),
+('Diego',              '983819894', 'Lead Alvas', '2025-09-01'),
+('German',   '959483073', 'Lead Alvas', '2025-09-01'),
+('Luis Rodríguez',     '929769574', 'Lead Alvas', '2025-09-03'),
+('Fernando Abel',      '985730695', 'Lead Alvas', '2025-08-26'),
+('Ares',               '968968118', 'Lead Alvas', '2025-08-25'),
+('Elio Sucoticona',    '913583022', 'Lead Alvas', '2025-09-01'),
+('Ruth',               '901305949', 'Lead Alvas', '2025-09-15'),
+('Jorge Campos',       '963026623', 'Lead Alvas', '2025-09-16'),
+('Serapio Choquecota','963286758', 'Lead Alvas', '2025-09-19'),
+('Lerman',             '953557571',  'Lead Alvas', '2025-09-22'),
+('Construye Inmob.',   '916330916', 'Lead Alvas', '2025-09-22'),
+('Nicanor',            '944500881', 'Lead Alvas', '2025-09-22'),
+('Juan Cáceres',       '952893505', 'Lead Alvas', '2025-09-23'),
+('Ever Calizaya',      '915911982', 'Lead Alvas', '2025-09-29');
 
-INSERT INTO personas (nombre, fecha_registro, id_usuario_registro) VALUES
-('Interesado Carlos Soto', '2025-10-25', (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'pablo_asesor'));
+INSERT INTO persona_categoria (id_persona, id_categoria)
+SELECT id_persona, 2 FROM personas; 
 
-INSERT INTO leads (id_persona, id_estado, id_usuario_asignado) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Interesado Carlos Soto'),
- (SELECT id_estado FROM lead_estados WHERE nombre_estado = 'NEGOCIACION'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'pablo_asesor'));
+INSERT INTO persona_categoria (id_persona, id_categoria) VALUES (3, 1);
 
-INSERT INTO personas (nombre, fecha_registro, id_usuario_registro) VALUES
-('Cliente Laura Pérez', '2024-08-01', (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'william_admin'));
+INSERT INTO propiedad (direccion, descripcion, medidas, servicios_basicos, precio_negociable, partida_registral) VALUES 
+('Av. Industrial Nº 259-B - Tacna', 'Terreno con servicios', '20.5 x 6 = 123 m²', 'Luz, Agua, Desagüe', 330000.00, 'PR-259-B-TAC'),
+('Sector 25 Viñani Mz.12 Lt.16 - Gal', 'Terreno sin servicios', '19.2 x 8 = 153.6 m²', 'Por solicitar', 28000.00, 'PR-MZ12-LT16');
 
-INSERT INTO leads (id_persona, id_estado, id_usuario_asignado) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Cliente Laura Pérez'),
- (SELECT id_estado FROM lead_estados WHERE nombre_estado = 'CERRADO_EXITOSO'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'william_admin'));
+INSERT INTO contrato (fecha_emision, id_propiedad, id_persona) VALUES 
+('2025-09-05', 1, 3),
+('2025-09-10', 2, 3);
 
- INSERT INTO clientes (id_persona, contrato_cantidad) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Cliente Laura Pérez'), 150000.00);
+INSERT INTO citas (fecha_agendada, observacion, estado_visita_guiada, id_persona, id_usuario) VALUES 
+('2025-09-05 10:00:00', 'Conversación con familiares', 'Reprogramó', 1, 2),
+('2025-09-04 15:00:00', 'El costo de la propiedad muy elevado', 'Canceló', 2, 2),
+('2025-09-03 09:30:00', 'No llegó a concretar su viaje', 'Reprogramó', 8, 2),
+('2025-09-30 11:00:00', 'No asistió a la cita programada', 'No realizó visita', 16, 2);
 
-INSERT INTO ventas_cerradas (id_lead, id_usuario_cierre, monto_final, fecha_cierre, comision_asesor) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Cliente Laura Pérez'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'william_admin'),
- 150000.00,
- '2024-09-10',
- 1.50);
+INSERT INTO interesado (id_propiedad, id_persona, estado_comprador, separado) VALUES 
+(1, 1, 'Agendó visita guiada', TRUE),  
+(1, 2, 'No está interesado', FALSE),  
+(1, 8, 'Esperando respuesta', FALSE), 
+(1, 16, 'Agendó visita guiada', FALSE), 
+(1, 4, 'Aún no se ha contactado', FALSE),  
+(1, 12, 'Aún no se ha contactado', FALSE), 
+(1, 15, 'Aún no se ha contactado', FALSE), 
+(2, 10, 'Esperando respuesta', FALSE),   
+(2, 11, 'Esperando respuesta', FALSE);   
 
 
-INSERT INTO interacciones (id_lead, id_usuario_asesor, tipo_interaccion, fecha_hora, notas) VALUES
-((SELECT id_persona FROM personas WHERE nombre = 'Interesado Carlos Soto'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'pablo_asesor'),
- 'Llamada',
- '2025-10-26 10:00:00',
- 'Presentación de propuesta. Cliente solicitó revisar financiamiento.'),
+INSERT INTO usuario_vendedor (id_usuario, id_persona, estado_vendedor) VALUES 
+(2, 3, 'Cierre'); 
 
-((SELECT id_persona FROM personas WHERE nombre = 'Interesado Carlos Soto'),
- (SELECT id_usuario FROM usuarios WHERE nombre_usuario = 'pablo_asesor'),
- 'Email',
- '2025-10-28 15:30:00',
- 'Envío de tabla de amortización. Cliente confirma interés.');
+
+INSERT INTO propiedad_asesor (id_propiedad, id_usuario) VALUES 
+(1, 2), (2, 2);

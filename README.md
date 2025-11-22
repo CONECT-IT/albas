@@ -149,7 +149,7 @@ El proyecto está configurado para conectarse a una base de datos PostgreSQL, lo
 1. Crea una cuenta en [supabase.com](https://supabase.com)
 2. Crea un nuevo proyecto
 3. Copia la "Project URL" y la "Service Role Key" o "Database URL"
-4. Usa esta información para completar tu variable `NUXT_POSTGRES_URL` en el archivo `.env`
+  4. Usa esta información para completar tu variable `NUXT_POSTGRES_URL` en el archivo `.env`
 
 La conexión se maneja en `server/utils/postgres.ts` usando el paquete `postgres`.
 
