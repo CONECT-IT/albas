@@ -1,6 +1,9 @@
 # ALBAS
 
-Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4, TypeScript** y se conecta a una base de datos **PostgreSQL** (con soporte para Supabase). El proyecto incluye autenticación de usuarios con roles, gestión de leads, ventas y clientes, y está desplegado en **NuxtHub** con **Cloudflare** usando Workers.
+Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4, TypeScript** y se
+conecta a una base de datos **PostgreSQL** (con soporte para Supabase). El proyecto incluye
+autenticación de usuarios con roles, gestión de leads, ventas y clientes, y está desplegado en
+**NuxtHub** con **Cloudflare** usando Workers.
 
 ## 📑 Índice
 
@@ -29,31 +32,34 @@ Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4
 
 2. **Git** (para control de versiones)
    - Descargar desde: https://git-scm.com/
-   - Verificar instalación: `git --version`
-   No olvides configurar tu cuenta usando
-  ```bash
-  git config --global user.email "tucorreo@example.com"
-  git config --global user.name "TuNombre"
-  ```
+   - Verificar instalación: `git --version` No olvides configurar tu cuenta usando
+
+```bash
+git config --global user.email "tucorreo@example.com"
+git config --global user.name "TuNombre"
+```
 
 3. **PostgreSQL**: Una instancia de base de datos corriendo localmente o accesible remotamente.
-   - Descargar desde https://www.enterprisedb.com/download-postgresql-binaries o la página oficial de PostgreSQL
+   - Descargar desde https://www.enterprisedb.com/download-postgresql-binaries o la página oficial
+     de PostgreSQL
    - Alternativamente, puedes usar una base de datos en la nube como **Supabase**
 
 ---
 
 ### ✨ Tecnologías Clave
 
--   **[Nuxt.js 4](https://nuxt.com/)**: Framework de Vue.js para aplicaciones universales modernas.
--   **[Vue.js 3](https://vuejs.org/)**: Framework progresivo de JavaScript.
--   **[TypeScript](https://www.typescriptlang.org/)**: Para un código más robusto y mantenible.
--   **[Nuxt UI](https://ui.nuxt.com/)**: Componentes de UI preconstruidos y estilizados.
--   **[NuxtHub](https://hub.nuxt.com/)**: Plataforma de hosting para aplicaciones Nuxt.
--   **[Nuxt Auth Utils](https://github.com/Atinux/nuxt-auth-utils)**: Utilidades para autenticación en Nuxt.
--   **[PostgreSQL](https://www.postgresql.org/)**: Sistema de gestión de base de datos relacional.
--   **[Supabase](https://supabase.com/)**: Alternativa open-source a Firebase con PostgreSQL.
--   **[Cloudflare](https://www.cloudflare.com/)**: CDN y servicios de seguridad web.
--   **[postgres npm package](https://www.npmjs.com/package/postgres)**: Cliente PostgreSQL para Node.js.
+- **[Nuxt.js 4](https://nuxt.com/)**: Framework de Vue.js para aplicaciones universales modernas.
+- **[Vue.js 3](https://vuejs.org/)**: Framework progresivo de JavaScript.
+- **[TypeScript](https://www.typescriptlang.org/)**: Para un código más robusto y mantenible.
+- **[Nuxt UI](https://ui.nuxt.com/)**: Componentes de UI preconstruidos y estilizados.
+- **[NuxtHub](https://hub.nuxt.com/)**: Plataforma de hosting para aplicaciones Nuxt.
+- **[Nuxt Auth Utils](https://github.com/Atinux/nuxt-auth-utils)**: Utilidades para autenticación en
+  Nuxt.
+- **[PostgreSQL](https://www.postgresql.org/)**: Sistema de gestión de base de datos relacional.
+- **[Supabase](https://supabase.com/)**: Alternativa open-source a Firebase con PostgreSQL.
+- **[Cloudflare](https://www.cloudflare.com/)**: CDN y servicios de seguridad web.
+- **[postgres npm package](https://www.npmjs.com/package/postgres)**: Cliente PostgreSQL para
+  Node.js.
 
 ---
 
@@ -62,12 +68,14 @@ Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4
 #### 🚀 Configuración Automática (Recomendado)
 
 1.  **Clona el repositorio:**
+
     ```bash
     git clone https://github.com/CONECT-IT/albas.git
     cd albas
     ```
 
 2.  **Instala las dependencias:**
+
     ```bash
     npm install
     ```
@@ -76,8 +84,7 @@ Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4
     - **Para PostgreSQL local:** Edita `.env` con tus credenciales locales
     - **Para Supabase:** Agrega tus credenciales de Supabase
 
-4.  **Ejecuta migraciones e inicia desarrollo local:**
-    Scripts para iniciar la base de datos
+4.  **Ejecuta migraciones e inicia desarrollo local:** Scripts para iniciar la base de datos
     ```bash
     npm run db:migrate  # Crear tablas
     npm run db:seed     # Crear usuarios de prueba
@@ -85,16 +92,16 @@ Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4
 
 ### Scripts Principales
 
-| Comando                 | Acción                                                              |
-| ----------------------- | ------------------------------------------------------------------- |
-| `npm run dev`              | Inicia el servidor en modo desarrollo con recarga automática       |
-| `npm run build`            | Construye la aplicación para producción                           |
-| `npm run generate`         | Genera la aplicación estáticamente     |
-| `npm run preview`          | Previsualiza la aplicación construida                              |
-| `npm run db:migrate`       | Ejecuta migraciones de base de datos                               |
-| `npm run db:seed`          | Inserta datos iniciales en la base de datos                        |
-| `npm run postinstall`      | Prepara el proyecto después de la instalación de dependencias      |
-| `npm run format`            | Formatea el código usando Prettier                                 |
+| Comando               | Acción                                                        |
+| --------------------- | ------------------------------------------------------------- |
+| `npm run dev`         | Inicia el servidor en modo desarrollo con recarga automática  |
+| `npm run build`       | Construye la aplicación para producción                       |
+| `npm run generate`    | Genera la aplicación estáticamente                            |
+| `npm run preview`     | Previsualiza la aplicación construida                         |
+| `npm run db:migrate`  | Ejecuta migraciones de base de datos                          |
+| `npm run db:seed`     | Inserta datos iniciales en la base de datos                   |
+| `npm run postinstall` | Prepara el proyecto después de la instalación de dependencias |
+| `npm run format`      | Formatea el código usando Prettier                            |
 
 ---
 
@@ -127,14 +134,17 @@ albas/
 El proyecto requiere las siguientes variables de entorno:
 
 #### 🐘 PostgreSQL / Supabase
+
 ```bash
 NUXT_POSTGRES_URL=postgresql://usuario:contraseña@host:puerto/nombre_base_datos
 ```
+
 Para Supabase, esta URL se puede obtener desde el panel de control.
 
 #### 🔐 Otras Variables Importantes
--   `NUXT_SESSION_NAME`: Nombre de la sesión (por defecto: "nuxt-session")
--   `NODE_ENV`: Entorno (development o production)
+
+- `NUXT_SESSION_NAME`: Nombre de la sesión (por defecto: "nuxt-session")
+- `NODE_ENV`: Entorno (development o production)
 
 ---
 
@@ -144,12 +154,13 @@ Para Supabase, esta URL se puede obtener desde el panel de control.
 
 ### 🌐 Conexión a Supabase
 
-El proyecto está configurado para conectarse a una base de datos PostgreSQL, lo que incluye Supabase. Para usar Supabase:
+El proyecto está configurado para conectarse a una base de datos PostgreSQL, lo que incluye
+Supabase. Para usar Supabase:
 
 1. Crea una cuenta en [supabase.com](https://supabase.com)
 2. Crea un nuevo proyecto
 3. Copia la "Project URL" y la "Service Role Key" o "Database URL"
-  4. Usa esta información para completar tu variable `NUXT_POSTGRES_URL` en el archivo `.env`
+4. Usa esta información para completar tu variable `NUXT_POSTGRES_URL` en el archivo `.env`
 
 La conexión se maneja en `server/utils/postgres.ts` usando el paquete `postgres`.
 
@@ -187,7 +198,8 @@ Para más información sobre NuxtHub: [https://hub.nuxt.com](https://hub.nuxt.co
 1.  **Actualiza `develop`:** `git checkout develop && git pull origin develop`
 2.  **Crea una rama:** `git checkout -b feature/nombre-de-la-funcionalidad`
 3.  **Desarrolla:** Usa `npm run dev` para correr el servidor localmente.
-4.  **Confirma y sube tus cambios:** `git add .`, `git commit -m "feat: implementa funcionalidad X"`, `git push origin ...`
+4.  **Confirma y sube tus cambios:** `git add .`,
+    `git commit -m "feat: implementa funcionalidad X"`, `git push origin ...`
 5.  **Crea un Pull Request (PR)** en GitHub para la revisión del código.
 
 ---
@@ -196,13 +208,16 @@ Para más información sobre NuxtHub: [https://hub.nuxt.com](https://hub.nuxt.co
 
 #### 🔄 Ejecución automática en Visual Studio Code
 
-Se ejecutará después de cada guardado de archivo si tienes instalado el plugin de Prettier. El formateador leerá las reglas definidas en el archivo `.prettierrc.json`.
+Se ejecutará después de cada guardado de archivo si tienes instalado el plugin de Prettier. El
+formateador leerá las reglas definidas en el archivo `.prettierrc.json`.
 
-1. Instala la extensión [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) en VS Code.
-2.  Abre la configuración de VS Code (`Ctrl + ,` o `Cmd + ,` en Mac).
-3.  Busca `Format On Save` y habilita la opción.
-4.  Asegúrate de que Prettier esté seleccionado como el formateador predeterminado:
-    - Busca `Default Formatter` en la configuración y selecciona `esbenp.prettier-vscode`.
+1. Instala la extensión
+   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+   en VS Code.
+2. Abre la configuración de VS Code (`Ctrl + ,` o `Cmd + ,` en Mac).
+3. Busca `Format On Save` y habilita la opción.
+4. Asegúrate de que Prettier esté seleccionado como el formateador predeterminado:
+   - Busca `Default Formatter` en la configuración y selecciona `esbenp.prettier-vscode`.
 
 #### 🔧 Ejecución manual con npm
 
@@ -237,9 +252,8 @@ npm run format
    - Verifica que el project-key en el workflow sea correcto
 
 #### Problemas conocidos:
-  - Inicio lento del servidor (Nitro), más información en:
-    https://github.com/nuxt/nuxt/issues/26211
-  - Errores de `fetch handle`, más información en:
-    https://github.com/nuxt/nuxt/issues/33630
 
-> **¿Problemas?** Contacta al equipo de desarrollo o abre un *issue* en el repositorio.
+- Inicio lento del servidor (Nitro), más información en: https://github.com/nuxt/nuxt/issues/26211
+- Errores de `fetch handle`, más información en: https://github.com/nuxt/nuxt/issues/33630
+
+> **¿Problemas?** Contacta al equipo de desarrollo o abre un _issue_ en el repositorio.

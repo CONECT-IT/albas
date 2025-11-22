@@ -1,10 +1,7 @@
 import { scryptSync } from "node:crypto";
 import { usePostgres } from "#imports";
 
-function verifyPassword(
-  hashedPassword: string,
-  plainPassword: string,
-): boolean {
+function verifyPassword(hashedPassword: string, plainPassword: string): boolean {
   try {
     const [saltB64, hashB64] = hashedPassword.split(".");
     if (!saltB64 || !hashB64) {

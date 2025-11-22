@@ -29,7 +29,7 @@ async function seed() {
 
   for (const user of plainPasswordUsers) {
     const hashedPassword = hashPassword(user.contrasena);
-    
+
     await sql`
       UPDATE usuarios
       SET contrasena = ${hashedPassword}

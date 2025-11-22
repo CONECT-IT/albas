@@ -27,8 +27,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Validación de entradas
-  const { id_usuario, nombre_usuario, contrasena, correo, nombres, apellidos } =
-    body;
+  const { id_usuario, nombre_usuario, contrasena, correo, nombres, apellidos } = body;
 
   if (!id_usuario) {
     throw createError({
@@ -137,9 +136,7 @@ export default defineEventHandler(async (event) => {
 
       if (conflictos.length > 0) {
         const campoConflicto =
-          conflictos[0][1] === nombreUsuarioSanitizado
-            ? "nombre de usuario"
-            : "correo electrónico";
+          conflictos[0][1] === nombreUsuarioSanitizado ? "nombre de usuario" : "correo electrónico";
 
         throw createError({
           statusCode: 409,
@@ -263,16 +260,14 @@ export default defineEventHandler(async (event) => {
     if (error.code === "ECONNREFUSED" || error.code === "ENOTFOUND") {
       throw createError({
         statusCode: 503,
-        message:
-          "El servicio de base de datos no está disponible. Intente más tarde.",
+        message: "El servicio de base de datos no está disponible. Intente más tarde.",
       });
     }
 
     if (error.code === "ETIMEDOUT") {
       throw createError({
         statusCode: 504,
-        message:
-          "La operación excedió el tiempo de espera. Intente nuevamente.",
+        message: "La operación excedió el tiempo de espera. Intente nuevamente.",
       });
     }
 

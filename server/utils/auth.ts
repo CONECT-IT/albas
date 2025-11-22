@@ -29,9 +29,7 @@ export const requireRole = (roles: string[]) => {
     }
 
     const hasRequiredRole = user.roles.some((userRole) =>
-      roles.some(
-        (requiredRole) => userRole.toLowerCase() === requiredRole.toLowerCase(),
-      ),
+      roles.some((requiredRole) => userRole.toLowerCase() === requiredRole.toLowerCase()),
     );
 
     if (!hasRequiredRole) {
