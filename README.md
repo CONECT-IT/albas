@@ -14,6 +14,7 @@ Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4
 - [Integración con Cloudflare](#-integración-con-cloudflare)
 - [Despliegue en NuxtHub](#-despliegue-en-nuxthub)
 - [Flujo de Trabajo Básico](#-flujo-de-trabajo-básico)
+- [Uso del formateador](#-uso-del-formateador)
 - [Recursos Útiles](#-recursos-útiles)
 - [Troubleshooting](#-troubleshooting)
 
@@ -93,6 +94,7 @@ Este repositorio contiene el dashboard administrativo construido con **Nuxt.js 4
 | `npm run db:migrate`       | Ejecuta migraciones de base de datos                               |
 | `npm run db:seed`          | Inserta datos iniciales en la base de datos                        |
 | `npm run postinstall`      | Prepara el proyecto después de la instalación de dependencias      |
+| `npm run format`            | Formatea el código usando Prettier                                 |
 
 ---
 
@@ -147,7 +149,7 @@ El proyecto está configurado para conectarse a una base de datos PostgreSQL, lo
 1. Crea una cuenta en [supabase.com](https://supabase.com)
 2. Crea un nuevo proyecto
 3. Copia la "Project URL" y la "Service Role Key" o "Database URL"
-4. Usa esta información para completar tu variable `NUXT_POSTGRES_URL` en el archivo `.env`
+  4. Usa esta información para completar tu variable `NUXT_POSTGRES_URL` en el archivo `.env`
 
 La conexión se maneja en `server/utils/postgres.ts` usando el paquete `postgres`.
 
@@ -190,15 +192,25 @@ Para más información sobre NuxtHub: [https://hub.nuxt.com](https://hub.nuxt.co
 
 ---
 
-### 📚 Recursos Útiles
+### ✏️ Uso del formateador
 
--   [Documentación de Nuxt.js](https://nuxt.com/docs)
--   [Documentación de Vue.js](https://vuejs.org/)
--   [Documentación de TypeScript](https://www.typescriptlang.org/)
--   [Documentación de Nuxt UI](https://ui.nuxt.com/)
--   [Guía de NuxtHub](https://hub.nuxt.com/docs)
--   [Documentación de Supabase](https://supabase.com/docs)
--   [Documentación de PostgreSQL](https://www.postgresql.org/docs/)
+#### 🔄 Ejecución automática en Visual Studio Code
+
+Se ejecutará después de cada guardado de archivo si tienes instalado el plugin de Prettier. El formateador leerá las reglas definidas en el archivo `.prettierrc.json`.
+
+1. Instala la extensión [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) en VS Code.
+2.  Abre la configuración de VS Code (`Ctrl + ,` o `Cmd + ,` en Mac).
+3.  Busca `Format On Save` y habilita la opción.
+4.  Asegúrate de que Prettier esté seleccionado como el formateador predeterminado:
+    - Busca `Default Formatter` en la configuración y selecciona `esbenp.prettier-vscode`.
+
+#### 🔧 Ejecución manual con npm
+
+Ejecuta el siguiente comando en la terminal para formatear todo el código del proyecto:
+
+```bash
+npm run format
+```
 
 ---
 
