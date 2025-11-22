@@ -1,9 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-11-12",
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
-  modules: ["@nuxt/ui", "@nuxthub/core", "nuxt-auth-utils", "@nuxt/image"],
+  modules: ["@nuxthub/core", "nuxt-auth-utils", "@nuxt/image"],
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
+  },
   runtimeConfig: {
     session: {
       name: "nuxt-session",

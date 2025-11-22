@@ -35,51 +35,51 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = usePostgres();
-  const [userData] = await db`
-    SELECT id_usuario, nombre_usuario, password_hash, nombres, apellidos, telefono, fecha_contratacion, activo
-    FROM usuarios
-    WHERE nombre_usuario = ${username} AND activo = true
+
+  const userWithRoles = await db`
+    SELECT
+      u.id_usuario,
+      u.nombre_usuario,
+      u.contrasena,
+      u.nombres,
+      u.apellidos,
+      u.correo,
+      u.estado,
+      r.nombre_rol
+    FROM usuarios u
+    LEFT JOIN rol r ON u.id_rol = r.id_rol
+    WHERE u.nombre_usuario = ${username} AND u.estado = true
   `.values();
 
-  if (!userData) {
+  if (!userWithRoles || userWithRoles.length === 0) {
+    await db.end();
     throw createError({
       statusCode: 401,
-      message: "Credenciales inválidas",
+      message: "Usuario no encontrado",
     });
   }
 
+  const userData = userWithRoles[0];
   const isValidPassword = verifyPassword(userData[2], password);
 
   if (!isValidPassword) {
+    await db.end();
     throw createError({
       statusCode: 401,
-      message: "Credenciales inválidas",
+      message: "Contraseña incorrecta",
     });
   }
 
-  const userRoles = await db`
-    SELECT r.nombre_rol
-    FROM usuario_roles ur
-    JOIN roles r ON ur.id_rol = r.id_rol
-    WHERE ur.id_usuario = ${userData[0]}
-  `.values();
-
-  const roles = userRoles.map((role) => role[0]);
-
-  await db`
-    UPDATE usuarios
-    SET last_login = NOW()
-    WHERE id_usuario = ${userData[0]}
-  `;
+  const roles = userData[7] ? [userData[7]] : [];
 
   await setUserSession(event, {
     user: {
       id: userData[0], // id_usuario
       username: userData[1], // nombre_usuario
       name: `${userData[3]} ${userData[4]}`, // nombres + apellidos
-      phone: userData[5], // telefono
-      hireDate: userData[6], // fecha_contratacion
-      roles: roles,
+      phone: undefined,
+      hireDate: undefined,
+      roles,
     },
     loggedInAt: new Date(),
   });
@@ -93,7 +93,7 @@ export default defineEventHandler(async (event) => {
       id: userData[0],
       username: userData[1],
       name: `${userData[3]} ${userData[4]}`,
-      roles: roles,
+      roles,
     },
   };
 });
