@@ -6,6 +6,6 @@
 definePageMeta({
   middleware: "auth",
   requiredRoles: ["Asesor"],
-  layout: "lead",
+  layout: "asesor",
 });
 </script>
