@@ -123,6 +123,48 @@ const setTab = (tabName: string) => {
         </div>
     </div>
     
+    <div v-else-if="currentTab === 'Clientes'" class="bg-white p-4 rounded-xl shadow-xl overflow-x-auto">
+        
+        <div class="mb-4">
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input 
+                    type="text" 
+                    placeholder="Buscar por nombre, apellido..." 
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+            </div>
+        </div>
+        <div class="grid grid-cols-11 gap-x-4 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200">
+            <span class="col-span-2">Nombre Completo</span>
+            <span>Contacto</span>
+            <span>Fecha</span>
+            <span>Tipo</span>
+            <span>Historial</span>
+            <span>Propiedades</span>
+            <span>Contrato</span>
+            <span>Vendido</span>
+            <span>Observaciones</span>
+            <span>Acciones</span>
+        </div>
+
+        <div class="divide-y divide-gray-100">
+            <div v-for="n in 7" :key="'cliente-row-'+n" class="grid grid-cols-11 gap-x-4 py-3 px-4 text-sm text-gray-800 min-h-[50px] items-center">
+                <span class="col-span-2"></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
 
   </div>
 </template>
