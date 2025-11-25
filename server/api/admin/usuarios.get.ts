@@ -1,36 +1,15 @@
 import { requireRole } from "../../utils/auth";
-import { usePostgres } from "#imports";
+import { userRepo } from "#shared/services/user-repository";
 
 export default defineEventHandler(async (event) => {
   await requireRole(["Administrador", "admin", "administrador/a"])(event);
 
-  const user = event.context.user;
-
-  const db = usePostgres();
   try {
-    const allUsers = await db`
-      SELECT
-        u.id_usuario,
-        u.nombre_usuario,
-        u.nombres,
-        u.apellidos,
-        u.correo,
-        r.nombre_rol
-      FROM usuarios u
-      INNER JOIN rol r ON u.id_rol = r.id_rol
-       `.values();
-
+    const allUsers = await userRepo.findAll();
     return {
       status: "success",
       message: "Usuarios retornados correctamente",
-      data: allUsers.map((userData) => ({
-        id_usuario: userData[0],
-        nombre_usuario: userData[1],
-        nombres: userData[2],
-        apellidos: userData[3],
-        correo: userData[4],
-        rol: userData[5],
-      })),
+      data: allUsers,
     };
   } catch (error) {
     console.error("[ERROR] Error obteniendo usuarios:", error);
@@ -38,7 +17,5 @@ export default defineEventHandler(async (event) => {
       statusCode: 500,
       message: "Error interno del servidor",
     });
-  } finally {
-    await db.end();
   }
 });

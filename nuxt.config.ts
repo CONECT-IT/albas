@@ -9,6 +9,11 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  nitro: {
+    experimental: {
+      openAPI: true,
+    },
+  },
   runtimeConfig: {
     session: {
       name: "nuxt-session",

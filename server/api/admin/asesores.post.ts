@@ -1,6 +1,75 @@
 import { usePostgres } from "#imports";
 import { scryptSync } from "node:crypto";
 
+defineRouteMeta({
+  openAPI: {
+    summary: "Crear un nuevo asesor",
+    description:
+      "Crea un nuevo usuario con rol 'Asesor'. Valida que el nombre de usuario y correo sean únicos.",
+    requestBody: {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["nombre_usuario", "contrasena", "correo", "nombres"],
+            properties: {
+              nombre_usuario: { type: "string" },
+              contrasena: { type: "string" },
+              correo: { type: "string", format: "email" },
+              nombres: { type: "string" },
+              apellidos: { type: "string", nullable: true },
+            },
+          },
+        },
+      },
+    },
+
+    responses: {
+      200: {
+        description: "Asesor creado exitosamente",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                status: { type: "string", example: "success" },
+                message: { type: "string" },
+                data: {
+                  type: "object",
+                  properties: {
+                    id_usuario: { type: "number" },
+                    nombre_usuario: { type: "string" },
+                    nombres: { type: "string" },
+                    apellidos: { type: "string", nullable: true },
+                    correo: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+
+      400: {
+        description: "Faltan campos requeridos",
+      },
+
+      404: {
+        description: "Rol 'Asesor' no encontrado",
+      },
+
+      409: {
+        description: "Nombre de usuario o correo ya existen",
+      },
+
+      500: {
+        description: "Error interno del servidor",
+      },
+    },
+  },
+});
+
 function hashPassword(plainPassword: string): string {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const hash = scryptSync(plainPassword, salt, 64);
@@ -27,8 +96,8 @@ export default defineEventHandler(async (event) => {
   try {
     // Verificar si el nombre de usuario o correo ya existen
     const existingUser = await db`
-      SELECT id_usuario 
-      FROM usuarios 
+      SELECT id_usuario
+      FROM usuarios
       WHERE nombre_usuario = ${nombre_usuario} OR correo = ${correo}
     `.values();
 
@@ -42,8 +111,8 @@ export default defineEventHandler(async (event) => {
 
     // Obtener el id del rol Asesor
     const rolAsesor = await db`
-      SELECT id_rol 
-      FROM rol 
+      SELECT id_rol
+      FROM rol
       WHERE nombre_rol = 'Asesor'
     `.values();
 
