@@ -94,5 +94,35 @@ const setTab = (tabName: string) => {
         </div>
     </div>
 
+    <div v-else-if="currentTab === 'Citas'" class="bg-white p-4 rounded-xl shadow-xl overflow-x-auto">
+        
+        <div class="grid grid-cols-10 gap-x-4 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200">
+            <span>N°</span>
+            <span class="col-span-2">Nombre Completo</span>
+            <span>Celular</span>
+            <span>Visitas</span>
+            <span>Gastos</span>
+            <span>Observaciones</span>
+            <span>Estado</span>
+            <span>Acciones</span>
+            <span>Guardar</span>
+        </div>
+
+        <div class="divide-y divide-gray-100">
+            <div v-for="n in 7" :key="'cita-row-'+n" class="grid grid-cols-10 gap-x-4 py-3 px-4 text-sm text-gray-800 min-h-[50px] items-center">
+                <span></span> 
+                <span class="col-span-2"></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+                <span></span> 
+            </div>
+        </div>
+    </div>
+    
+
   </div>
 </template>
