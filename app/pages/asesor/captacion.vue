@@ -1,21 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import NuevoLeadForm from '~/components/asesor/NuevoLeadForm.vue';
 definePageMeta({
   layout: 'asesor', 
 });
 
-// Variable reactiva para controlar qué pestaña está activa
-const currentTab = ref('Leads'); // Inicia en 'Leads'
-
-// Función para cambiar la pestaña activa
+// Control de pestañas
+const currentTab = ref('Leads');
 const setTab = (tabName: string) => {
     currentTab.value = tabName;
+};
+// Control del modal
+const showModal = ref(false);
+
+// Capturar datos cuando se cree un Lead
+const guardarLead = (leadData: any) => {
+  console.log("Nuevo Lead creado:", leadData);
 };
 </script>
 
 <template>
   <div class="p-8">
-    
+    <!-- Encabezado con Tabs y Botón -->
     <div class="flex justify-between items-center mb-6">
         
         <div class="flex space-x-2">
@@ -57,11 +63,12 @@ const setTab = (tabName: string) => {
         <button 
             class="px-4 py-2 rounded-full font-semibold transition-colors duration-150 shadow-md 
                    bg-white text-negro-primario border border-gray-200"
+            @click="showModal = true"
         >
             + Agregar Lead
         </button>
     </div>
-    
+    <!-- Tabla 1: Leads-->
     <div v-if="currentTab === 'Leads'" class="bg-white p-4 rounded-xl shadow-xl overflow-x-auto">
         <div class="grid grid-cols-12 gap-x-4 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200">
             <span>N°</span>
@@ -93,7 +100,7 @@ const setTab = (tabName: string) => {
             </div>
         </div>
     </div>
-
+    <!-- Tabla 2: Citas -->
     <div v-else-if="currentTab === 'Citas'" class="bg-white p-4 rounded-xl shadow-xl overflow-x-auto">
         
         <div class="grid grid-cols-10 gap-x-4 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200">
@@ -122,7 +129,7 @@ const setTab = (tabName: string) => {
             </div>
         </div>
     </div>
-    
+    <!-- Tabla 3: Clientes -->
     <div v-else-if="currentTab === 'Clientes'" class="bg-white p-4 rounded-xl shadow-xl overflow-x-auto">
         
         <div class="mb-4">
@@ -165,6 +172,11 @@ const setTab = (tabName: string) => {
             </div>
         </div>
     </div>
-
+    <!-- Modal para crear lead-->
+    <NuevoLeadForm 
+      v-if="showModal"
+      @close="showModal = false"
+      @crear="guardarLead"
+    />
   </div>
 </template>
