@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import NuevoLeadForm from '~/components/asesor/NuevoLeadForm.vue';
 definePageMeta({
   layout: 'asesor', 
 });
@@ -9,7 +10,8 @@ const currentTab = ref('Leads');
 const setTab = (tabName: string) => {
     currentTab.value = tabName;
 };
-
+//control del modal
+const showModal = ref(false);
 
 // Capturar datos cuando se cree un Lead
 const guardarLead = (leadData: any) => {
@@ -58,7 +60,14 @@ const guardarLead = (leadData: any) => {
                 Clientes
             </button>
         </div>
-
+        <!--Boton agregar lead-->
+        <button 
+            class="px-4 py-2 rounded-full font-semibold transition-colors duration-150 shadow-md 
+                   bg-white text-negro-primario border border-gray-200"
+            @click="showModal = true"
+        >
+            + Agregar Lead
+        </button>
     </div>
     
     <!-- Tabla 1: Leads-->
@@ -169,6 +178,11 @@ const guardarLead = (leadData: any) => {
             </div>
         </div>
     </div>
-
+     <!-- Modal para crear lead-->
+    <NuevoLeadForm 
+      v-if="showModal"
+      @close="showModal = false"
+      @crear="guardarLead"
+    />
   </div>
 </template>
