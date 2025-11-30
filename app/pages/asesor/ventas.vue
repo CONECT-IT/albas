@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import NuevoLeadForm from '~/components/asesor/NuevoLeadForm.vue';
+import NuevoLeadForm from '~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue';
 definePageMeta({
   layout: 'asesor', 
 });
