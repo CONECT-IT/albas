@@ -38,7 +38,7 @@ const crearLead = () => {
           <p class="text-gray-400">Ingrese la información del Lead</p>
         </div>
         <button 
-          class="text-2xl font-bold"
+          class="text-2xl font-bold relative -top-6"
           @click="$emit('close')"
         >
           ✕
