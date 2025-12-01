@@ -21,72 +21,62 @@ const setTab = (tab: string) => (currentTab.value = tab);
 const showNuevoLeadForm = ref(false);
 
 //---------------------------------------------------DATOS GENERADOS(Adaptar)--------------------------------------------------------------------
-// Datos Generados leads
+// Lead único en Leads
 const leads = ref([
   {
     id: 1,
-    nombre: "Jose Mamani Lopez",
-    celular: "945234123",
-    fecha: "23 / 23 / 23",
-    tipo: "Propios",
+    nombre: "Lead Ejemplo",
+    celular: "900000000",
+    fecha: "01/01/2025",
+    tipo: "Propio",
     estado: "Seguimiento",
   },
 ]);
 
-//Datos Generados Citas
-const citas = ref([
-  {
-    id: 1,
-    nombre: "Jose Gonzales Lopez",
-    celular: "999999999",
-    fecha: "23 /24 / 23",
-    tipo: "Propios",
-    Estado: "realizado",
-  },
-]);
+// Vacío: esperará al Guardar
+const citas = ref([]);
 
+// Vacío: esperará al Guardar
+const clientes = ref([]);
 
-//Datos Generados Clientes
-const clientes = ref([
-  {
-    id: 1,
-    nombre: "Jose Vargas Lopez",
-    celular: "888888888",
-    fecha: "23 / 25 / 23",
-    tipo: "Propios",
-    Vendido: "seleccionar",
-  },
-]);
-
-
-
-// Guardar Lead ESTADO
-const guardarLead = (leadData: any) => {
-  leads.value.push({
-    id: leads.value.length + 1,
-    estado: "Seguimiento",
-    ...leadData,
-  });
-};
-
-// Guardar Cita ESTADO
-const guardarLeadCitas = (leadDataCitas: any) => {
+// PASAR DE LEADS → CITAS
+const pasarLeadACitas = (lead: any) => {
   citas.value.push({
     id: citas.value.length + 1,
+    nombre: lead.nombre,
+    celular: lead.celular,
+    fecha: lead.fecha,
+    tipo: lead.tipo,
     Estado: "realizado",
-    ...leadDataCitas,
   });
+
+  // Remover de leads
+  leads.value = [];
 };
 
-
-
-// Guardar Cliente ESTADO
-const guardarLeadClientes = (leadDataClientes: any) => {
+// PASAR DE CITAS → CLIENTES
+const pasarCitaAClientes = (cita: any) => {
   clientes.value.push({
     id: clientes.value.length + 1,
+    nombre: cita.nombre,
+    celular: cita.celular,
+    fecha: cita.fecha,
+    tipo: cita.tipo,
     Vendido: "seleccionar",
-    ...leadDataClientes,
   });
+
+  // Remover de citas
+  citas.value = [];
+};
+
+const store = {
+  leads,
+  citas,
+  clientes
+};
+
+const eliminarItem = (tipo: "leads" | "citas" | "clientes", id: number) => {
+  store[tipo].value = store[tipo].value.filter((item) => item.id !== id);
 };
 //---------------------------------------------------FINAL DE DATOS GENERADOS --------------------------------------------------------------------
 
@@ -152,15 +142,15 @@ const VendidoClientes = ["seleccionar", "No", "Si"];
 
 <!------------------------------------------------------TABLA DE LEADS----------------------------------------------------------------------->
     <div v-if="currentTab === 'Leads'">
-      <TablaLeads :leads="leads" :estados="estados" />
+      <TablaLeads :leads="leads" :estados="estados" @guardar="pasarLeadACitas" @eliminar="(id) => eliminarItem('leads', id)" />
     </div>
 <!------------------------------------------------------TABLA DE CITAS----------------------------------------------------------------------->
     <div v-else-if="currentTab === 'Citas'">
-      <TablaCitas :citas="citas" :estadosCitas="estadosCitas" />
+      <TablaCitas :citas="citas" :estadosCitas="estadosCitas" @guardar="pasarCitaAClientes" @eliminar="(id) => eliminarItem('citas', id)" />
     </div>
 <!------------------------------------------------------TABLA DE CLIENTES----------------------------------------------------------------------->
     <div v-else-if="currentTab === 'Clientes'">
-      <TablaClientes :clientes="clientes" :VendidoClientes="VendidoClientes" />
+      <TablaClientes :clientes="clientes" :VendidoClientes="VendidoClientes" @eliminar="(id) => eliminarItem('clientes', id)" />
     </div>
 
     <!-- Modal Agregar Nuevo Lead -->

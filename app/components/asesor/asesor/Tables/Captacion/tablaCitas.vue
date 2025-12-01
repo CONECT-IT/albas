@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 
 //--------------------------------Importar todos los formularios------------------------------
 
@@ -13,7 +13,8 @@ import ObservacionGastosForm from "~/components/asesor/asesor/Forms/captacionFor
 import EditarObservacionGastosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para EditarObservacion-tablaCitas
 import VerObservacionGastosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para VerObservacion-tablaCitas
 import EditarLeadCitaForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para EditarLeadCita-tablaCitas
-
+import ConfirmarGuardar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarGuardar.vue";
+import ConfirmarEliminar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarEliminar.vue";
 // Props
 interface LeadCitas {
   id: number;
@@ -23,11 +24,15 @@ interface LeadCitas {
   tipo: string;
   Estado: string;
 }
-
-defineProps<{
+const props = defineProps<{
   citas: LeadCitas[];
   estadosCitas: string[];
 }>();
+
+/* ---------------------EMIT PARA CAPTACION.VUE--------------------- */
+const emit = defineEmits(["guardar","eliminar"]);
+const confirmarRefGuardar = ref<InstanceType<typeof ConfirmarGuardar> | null>(null);
+const confirmarRefEliminar = ref<InstanceType<typeof ConfirmarEliminar> | null>(null);
 //---------------------------------------------------MOSTRAR MODAL --------------------------------------------------------------------
 // Modal - VISITAS
 const showVisitasForm = ref(false);
@@ -64,8 +69,7 @@ const openForm = (cita: LeadCitas, formType: string) => {
     verObservacionGastos: showVerObservacionGastosForm,
     editarLeadCita: showEditarLeadCitaForm,
   };
-  const form = formMap[formType];
-  if (form) form.value = true;
+  if (formMap[formType]) formMap[formType].value = true;
 };
 
 // Función para cerrar modal
@@ -82,8 +86,7 @@ const closeForm = (formType: string) => {
     verObservacionGastos: showVerObservacionGastosForm,
     editarLeadCita: showEditarLeadCitaForm,
   };
-  const form = formMap[formType];
-  if (form) form.value = false;
+  if (formMap[formType]) formMap[formType].value = false;
 };
 </script>
 
@@ -109,7 +112,7 @@ const closeForm = (formType: string) => {
     <!---------------- Filas de datos alvas -------------->
     <div class="divide-y divide-gray-100">
       <div
-        v-for="cita in citas"
+        v-for="cita in props.citas"
         :key="cita.id"
         class="grid grid-cols-12 gap-x-4 py-3 px-4 text-sm text-gray-800 items-center"
       >
@@ -333,7 +336,7 @@ const closeForm = (formType: string) => {
 <!-- BOTON ESTADO -->
         <span class="relative">
           <select v-model="cita.Estado" class="border rounded px-2 py-1 text-sm -ml-6">
-            <option v-for="e in estadosCitas" :key="e" :value="e">{{ e }}</option>
+            <option v-for="e in props.estadosCitas" :key="e" :value="e">{{ e }}</option>
           </select>
         </span>
 
@@ -363,7 +366,7 @@ const closeForm = (formType: string) => {
 
           <!-- Eliminar Lead -->
           <button
-            class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0"
+            @click="confirmarRefEliminar?.confirmarEliminar(() => emit('eliminar', cita.id))" class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0"
             title="Eliminar Lead"
           >
             <svg
@@ -386,7 +389,7 @@ const closeForm = (formType: string) => {
         <!-- GUARDAR -->
         <span>
           <button
-            class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario ml-13"
+            @click="confirmarRefGuardar?.confirmar(() => emit('guardar', cita))" class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario ml-13"
             title="Guardar"
           >
             <svg
@@ -475,5 +478,7 @@ const closeForm = (formType: string) => {
       :cita="selectedCita"
       @close="closeForm('editarLeadCita')"
     />
+    <ConfirmarGuardar ref="confirmarRefGuardar" />
+    <ConfirmarEliminar ref="confirmarRefEliminar" />
   </div>
 </template>
