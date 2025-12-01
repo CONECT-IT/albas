@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 
 //--------------------------------Importar todos los formularios------------------------------
 import VerHistorialForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
@@ -7,7 +7,8 @@ import VerTerrenosForm from "~/components/asesor/asesor/Forms/captacionForms/Nue
 import SubirContratoForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
 import VerComentariosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
 import EditarLeadClienteForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-
+import ConfirmarGuardar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarGuardar.vue";
+import ConfirmarEliminar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarEliminar.vue";
 // Props
 interface LeadClientes {
   id: number;
@@ -22,7 +23,8 @@ defineProps<{
   clientes: LeadClientes[];
   VendidoClientes: string[];
 }>();
-
+const emit = defineEmits(["guardar","eliminar"]);
+const confirmarRefEliminar = ref<InstanceType<typeof ConfirmarEliminar> | null>(null);
 //---------------------------------------------------MOSTRAR MODAL --------------------------------------------------------------------
 // Modal - HISTORIAL
 const showVerHistorialForm = ref(false);
@@ -256,7 +258,7 @@ const closeForm = (formType: string) => {
 
             <!--eliminar lead -->
             <button
-              class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0"
+              @click="confirmarRefEliminar?.confirmarEliminar(() => emit('eliminar', cliente.id))" class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -309,6 +311,6 @@ const closeForm = (formType: string) => {
       :cita="selectedCliente"
       @close="closeForm('editarLeadCliente')"
     />
-
+    <ConfirmarEliminar ref="confirmarRefEliminar" />
   </div>
 </template>
