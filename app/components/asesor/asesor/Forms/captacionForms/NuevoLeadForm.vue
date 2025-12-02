@@ -46,8 +46,8 @@ const crearLead = () => {
       </div>
 
       <!-- Formulario -->
-      <div class="grid grid-cols-2 gap-6">
-
+      <form @submit.prevent="agregarLead" class="grid grid-cols-2 gap-6">   
+        
         <!-- Nombre Completo -->
         <div>
           <label class="block text-sm font-semibold mb-1">Nombre Completo</label>
@@ -92,7 +92,7 @@ const crearLead = () => {
           </select>
         </div>
 
-      </div>
+      </form>
 
       <!-- Botones -->
       <div class="flex justify-end space-x-4 mt-8">
@@ -114,3 +114,51 @@ const crearLead = () => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+
+const agregarLead = async () => {
+  cargandoCreacion.value = true;
+  mensajeCreacion.value = null;
+
+  try {
+    const data = await $fetch("/api/admin/asesores", {
+      method: "POST",
+      body: {
+        nombre_usuario: nuevoAsesor.value.nombre_usuario,
+        contrasena: nuevoAsesor.value.contrasena,
+        correo: nuevoAsesor.value.correo,
+        nombres: nuevoAsesor.value.nombres,
+        apellidos: nuevoAsesor.value.apellidos || null,
+      },
+    });
+
+    // Limpiar formulario
+    nuevoAsesor.value = {
+      nombre_usuario: "",
+      contrasena: "",
+      correo: "",
+      nombres: "",
+      apellidos: "",
+    };
+
+    // Actualizar lista de asesores
+    await cargarAsesores();
+
+    mensajeCreacion.value = {
+      tipo: "bg-green-100 text-green-800",
+      texto: data.message || "Asesor creado exitosamente",
+    };
+
+    // Ocultar formulario después de crear exitosamente
+    showCreateForm.value = false;
+  } catch (error: any) {
+    mensajeCreacion.value = {
+      tipo: "bg-red-100 text-red-800",
+      texto: error.data?.message || error.message || "Error al crear asesor",
+    };
+  } finally {
+    cargandoCreacion.value = false;
+  }
+};
+</script>
