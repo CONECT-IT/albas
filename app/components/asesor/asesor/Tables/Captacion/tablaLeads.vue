@@ -31,7 +31,7 @@ const props = defineProps<{
 }>();
 
 /* ---------------------EMIT PARA CAPTACION.VUE--------------------- */
-const emit = defineEmits(["guardar","eliminar"]);
+const emit = defineEmits(["guardar", "eliminar"]);
 
 const confirmarRefGuardar = ref<InstanceType<typeof ConfirmarGuardar> | null>(null);
 const confirmarRefEliminar = ref<InstanceType<typeof ConfirmarEliminar> | null>(null);
@@ -94,7 +94,6 @@ const closeForm = (formType: string) => {
 
 <template>
   <div class="bg-blanco-primario p-4 rounded-xl shadow-xl overflow-x-auto">
-
     <!--------------------------------------- Header tabla -------------------------------------->
     <div
       class="grid grid-cols-12 gap-x-1 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200"
@@ -126,7 +125,7 @@ const closeForm = (formType: string) => {
         <span class="-ml-20">{{ lead.fecha }}</span>
         <span class="-ml-16">{{ lead.tipo }}</span>
 
-<!-- BOTONES PROPIEDAD -->
+        <!-- BOTONES PROPIEDAD -->
         <span class="flex items-center space-x-1 -ml-18">
           <!-- Agregar Propiedad -->
           <button
@@ -196,7 +195,7 @@ const closeForm = (formType: string) => {
           </button>
         </span>
 
-<!-- BOTONES VISITA -->
+        <!-- BOTONES VISITA -->
         <span class="flex items-center space-x-1 -ml-18">
           <!-- Agregar Visita -->
           <button
@@ -266,7 +265,7 @@ const closeForm = (formType: string) => {
           </button>
         </span>
 
-<!-- BOTONES OBSERVACIÓN -->
+        <!-- BOTONES OBSERVACIÓN -->
         <span class="flex items-center space-x-1 -ml-18">
           <!-- Agregar Observación -->
           <button
@@ -336,14 +335,14 @@ const closeForm = (formType: string) => {
           </button>
         </span>
 
-<!--BOTON ESTADO -->
+        <!--BOTON ESTADO -->
         <span class="relative">
           <select v-model="lead.estado" class="border rounded px-2 py-1 text-sm -ml-6">
             <option v-for="e in props.estados" :key="e" :value="e">{{ e }}</option>
           </select>
         </span>
 
-<!--BOTONES ACCIONES (Editar y Eliminar) -->
+        <!--BOTONES ACCIONES (Editar y Eliminar) -->
         <span class="flex space-x-2">
           <!-- Editar Lead -->
           <button
@@ -369,7 +368,8 @@ const closeForm = (formType: string) => {
 
           <!-- Eliminar Lead -->
           <button
-           @click="confirmarRefEliminar?.confirmarEliminar(() => emit('eliminar', lead.id))" class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0"
+            @click="confirmarRefEliminar?.confirmarEliminar(() => emit('eliminar', lead.id))"
+            class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0"
             title="Eliminar Lead"
           >
             <svg
@@ -389,10 +389,11 @@ const closeForm = (formType: string) => {
           </button>
         </span>
 
-<!-- BOTON GUARDAR -->
+        <!-- BOTON GUARDAR -->
         <span>
           <button
-            @click="confirmarRefGuardar?.confirmar(() => emit('guardar', lead))" class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario ml-13"
+            @click="confirmarRefGuardar?.confirmar(() => emit('guardar', lead))"
+            class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario ml-13"
             title="Guardar"
           >
             <svg
@@ -416,14 +417,10 @@ const closeForm = (formType: string) => {
         </span>
       </div>
     </div>
-<!--------------------------------------------------------------MODAl-------------------------------------------------------------->
+    <!--------------------------------------------------------------MODAl-------------------------------------------------------------->
 
-<!-- MODAL - PROPIEDAD -->
-    <PropiedadForm
-      v-if="showPropiedadForm"
-      :lead="selectedLead"
-      @close="closeForm('propiedad')"
-    />
+    <!-- MODAL - PROPIEDAD -->
+    <PropiedadForm v-if="showPropiedadForm" :lead="selectedLead" @close="closeForm('propiedad')" />
 
     <EditarPropiedadForm
       v-if="showEditarPropiedadForm"
@@ -437,12 +434,8 @@ const closeForm = (formType: string) => {
       @close="closeForm('verPropiedad')"
     />
 
-<!-- MODAL - VISITA -->
-    <VisitaForm
-      v-if="showVisitaForm"
-      :lead="selectedLead"
-      @close="closeForm('visita')"
-    />
+    <!-- MODAL - VISITA -->
+    <VisitaForm v-if="showVisitaForm" :lead="selectedLead" @close="closeForm('visita')" />
 
     <EditarVisitaForm
       v-if="showEditarVisitaForm"
@@ -450,13 +443,9 @@ const closeForm = (formType: string) => {
       @close="closeForm('editarVisita')"
     />
 
-    <VerVisitaForm
-      v-if="showVerVisitaForm"
-      :lead="selectedLead"
-      @close="closeForm('verVisita')"
-    />
+    <VerVisitaForm v-if="showVerVisitaForm" :lead="selectedLead" @close="closeForm('verVisita')" />
 
-<!-- MODAL - OBSERVACIÓN -->
+    <!-- MODAL - OBSERVACIÓN -->
     <ObservacionForm
       v-if="showObservacionForm"
       :lead="selectedLead"
@@ -475,7 +464,7 @@ const closeForm = (formType: string) => {
       @close="closeForm('verObservacion')"
     />
 
-<!-- MODAL - EDITAR LEAD -->
+    <!-- MODAL - EDITAR LEAD -->
     <EditarLeadForm
       v-if="showEditarLeadForm"
       :lead="selectedLead"

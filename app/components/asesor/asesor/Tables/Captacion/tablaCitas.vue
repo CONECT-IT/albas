@@ -30,7 +30,7 @@ const props = defineProps<{
 }>();
 
 /* ---------------------EMIT PARA CAPTACION.VUE--------------------- */
-const emit = defineEmits(["guardar","eliminar"]);
+const emit = defineEmits(["guardar", "eliminar"]);
 const confirmarRefGuardar = ref<InstanceType<typeof ConfirmarGuardar> | null>(null);
 const confirmarRefEliminar = ref<InstanceType<typeof ConfirmarEliminar> | null>(null);
 //---------------------------------------------------MOSTRAR MODAL --------------------------------------------------------------------
@@ -97,16 +97,16 @@ const closeForm = (formType: string) => {
       class="grid grid-cols-12 gap-x-1 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200"
     >
       <span class="mr-2">N°</span>
-        <span class="col-span-2 -ml-15">Nombre Completo</span>
-        <span class="-ml-18">Celular</span>
-        <span class="-ml-15">Fecha</span>
-        <span class="-ml-13">Tipo</span>
-        <span class="-ml-14">Visitas</span>
-        <span class="-ml-7">Gastos</span>
-        <span class="-ml-7">Observación</span>
-        <span class="ml-4">Estado</span>
-        <span class="ml-7">Acciones</span>
-        <span class="ml-11">Guardar</span>
+      <span class="col-span-2 -ml-15">Nombre Completo</span>
+      <span class="-ml-18">Celular</span>
+      <span class="-ml-15">Fecha</span>
+      <span class="-ml-13">Tipo</span>
+      <span class="-ml-14">Visitas</span>
+      <span class="-ml-7">Gastos</span>
+      <span class="-ml-7">Observación</span>
+      <span class="ml-4">Estado</span>
+      <span class="ml-7">Acciones</span>
+      <span class="ml-11">Guardar</span>
     </div>
 
     <!---------------- Filas de datos alvas -------------->
@@ -123,7 +123,7 @@ const closeForm = (formType: string) => {
         <span class="-ml-20">{{ cita.fecha }}</span>
         <span class="-ml-16">{{ cita.tipo }}</span>
 
-<!-- BOTONES DE VISITAS-->
+        <!-- BOTONES DE VISITAS-->
         <span class="flex items-center space-x-1 -ml-18">
           <!-- Agregar Visitas -->
           <button
@@ -193,7 +193,7 @@ const closeForm = (formType: string) => {
           </button>
         </span>
 
-<!-- BOTONES GASTOS -->
+        <!-- BOTONES GASTOS -->
         <span class="flex items-center space-x-1 -ml-18">
           <!-- Agregar Gastos -->
           <button
@@ -263,7 +263,7 @@ const closeForm = (formType: string) => {
           </button>
         </span>
 
-<!-- BOTONES OBSERVACIÓN -->
+        <!-- BOTONES OBSERVACIÓN -->
         <span class="flex items-center space-x-1 -ml-18">
           <!-- Agregar Observación -->
           <button
@@ -333,14 +333,14 @@ const closeForm = (formType: string) => {
           </button>
         </span>
 
-<!-- BOTON ESTADO -->
+        <!-- BOTON ESTADO -->
         <span class="relative">
           <select v-model="cita.Estado" class="border rounded px-2 py-1 text-sm -ml-6">
             <option v-for="e in props.estadosCitas" :key="e" :value="e">{{ e }}</option>
           </select>
         </span>
 
-<!-- BOTONES DE ACCIONES (Editar y Eliminar) -->
+        <!-- BOTONES DE ACCIONES (Editar y Eliminar) -->
         <span class="flex space-x-2">
           <!-- Editar Lead -->
           <button
@@ -366,7 +366,8 @@ const closeForm = (formType: string) => {
 
           <!-- Eliminar Lead -->
           <button
-            @click="confirmarRefEliminar?.confirmarEliminar(() => emit('eliminar', cita.id))" class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0"
+            @click="confirmarRefEliminar?.confirmarEliminar(() => emit('eliminar', cita.id))"
+            class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0"
             title="Eliminar Lead"
           >
             <svg
@@ -389,7 +390,8 @@ const closeForm = (formType: string) => {
         <!-- GUARDAR -->
         <span>
           <button
-            @click="confirmarRefGuardar?.confirmar(() => emit('guardar', cita))" class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario ml-13"
+            @click="confirmarRefGuardar?.confirmar(() => emit('guardar', cita))"
+            class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario ml-13"
             title="Guardar"
           >
             <svg
@@ -414,13 +416,9 @@ const closeForm = (formType: string) => {
       </div>
     </div>
 
-<!--------------------------------------------------------------MODAl-------------------------------------------------------------->
-<!-- MODALES - VISITAS -->
-    <VisitasForm
-       v-if="showVisitasForm"
-        :cita="selectedCita"
-      @close="closeForm('visitas')"
-    />
+    <!--------------------------------------------------------------MODAl-------------------------------------------------------------->
+    <!-- MODALES - VISITAS -->
+    <VisitasForm v-if="showVisitasForm" :cita="selectedCita" @close="closeForm('visitas')" />
 
     <EditarVisitasForm
       v-if="showEditarVisitasForm"
@@ -434,12 +432,8 @@ const closeForm = (formType: string) => {
       @close="closeForm('verVisitaAgendada')"
     />
 
-<!-- MODALES - GASTOS-->
-    <GastosForm
-       v-if="showGastosForm"
-        :cita="selectedCita"
-      @close="closeForm('gastos')"
-    />
+    <!-- MODALES - GASTOS-->
+    <GastosForm v-if="showGastosForm" :cita="selectedCita" @close="closeForm('gastos')" />
 
     <EditarGastosForm
       v-if="showEditarGastosForm"
@@ -447,13 +441,9 @@ const closeForm = (formType: string) => {
       @close="closeForm('editarGastos')"
     />
 
-    <VerGastosForm
-      v-if="showVerGastosForm"
-      :cita="selectedCita"
-      @close="closeForm('verGastos')"
-    />
+    <VerGastosForm v-if="showVerGastosForm" :cita="selectedCita" @close="closeForm('verGastos')" />
 
-<!-- MODALES - OBSERVACIÓN -->
+    <!-- MODALES - OBSERVACIÓN -->
     <ObservacionGastosForm
       v-if="showObservacionGastosForm"
       :cita="selectedCita"
@@ -472,7 +462,7 @@ const closeForm = (formType: string) => {
       @close="closeForm('verObservacionGastos')"
     />
 
-<!-- MODALES - EDITAR LEAD -->
+    <!-- MODALES - EDITAR LEAD -->
     <EditarLeadCitaForm
       v-if="showEditarLeadCitaForm"
       :cita="selectedCita"

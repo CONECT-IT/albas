@@ -31,24 +31,18 @@ defineExpose({
 
 <template>
   <div v-if="show" class="fixed inset-0 z-50">
-
     <!--DESENFOQUE-->
     <div
       class="absolute inset-0 bg-black/50 backdrop-blur-md transition duration-200 z-40"
       @click="cerrar"
     ></div>
     <!--MODAL -->
-    <div
-      class="relative z-50 bg-white rounded-xl p-6 w-80 mx-auto mt-40 text-center shadow-xl"
-    >
+    <div class="relative z-50 bg-white rounded-xl p-6 w-80 mx-auto mt-40 text-center shadow-xl">
       <h2 class="text-lg font-bold mb-2">¿Estás seguro?</h2>
       <p class="text-sm mb-6">¿Deseas guardar esta información?</p>
 
       <div class="flex justify-between">
-        <button
-          @click="cerrar"
-          class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-        >
+        <button @click="cerrar" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
           Cancelar
         </button>
 
@@ -60,6 +54,5 @@ defineExpose({
         </button>
       </div>
     </div>
-
   </div>
 </template>

@@ -1,13 +1,30 @@
 import { usePostgres } from "#imports";
-
+import { getQuery } from "h3";
 export default defineEventHandler(async (event) => {
+  //   const user = event.context.user;
 
-  const user = event.context.user;
+  //   const body = await readBody(event);
+  //   console.log(JSON.stringify(body));
+  const query = getQuery(event);
+  const mode = query["hub.mode"];
+  const challenge = query["hub.challenge"];
+  const token = query["hub.verify_token"];
 
-  const db = usePostgres();
+  console.log("GET /webhook - mode:", mode, "token:", token);
 
-  const body = await readBody(event);
-  console.log(JSON.stringify(body));
+  if (mode === "subscribe") {
+    console.log("✓ Webhook verified successfully!");
+    return {
+      status: 200,
+      message: "Asesores retornados correctamente",
+      challenge,
+    };
+  } else {
+    return {
+      status: 400,
+      message: "no funciono",
+    };
+  }
 
   /*try {
     
