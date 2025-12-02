@@ -14,11 +14,12 @@ export default defineEventHandler(async (event) => {
 
   if (mode === "subscribe") {
     console.log("✓ Webhook verified successfully!");
-    return {
+    const res = {
       status: 200,
       message: "Asesores retornados correctamente",
-      challenge,
+      "hub.challenge": challenge,
     };
+    return res;
   } else {
     return {
       status: 400,
