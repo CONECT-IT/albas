@@ -1,9 +1,10 @@
 declare module "#auth-utils" {
   interface User {
     id: number;
-    username: string;
-    name: string;
-    roles?: string[];
+    nombre_usuario: string;
+    nombre_completo: string;
+    correo: string;
+    rol: string;
   }
 
   interface UserSession {

@@ -126,16 +126,14 @@ definePageMeta({
 const { loggedIn, user, fetch: fetchUser } = useUserSession();
 
 if (loggedIn.value) {
-  if (!user.value?.roles) {
+  if (!user.value?.rol) {
     await fetchUser();
   }
 
-  if (user.value?.roles?.includes("Administrador")) {
+  if (user.value?.rol === "Administrador") {
     await navigateTo("/admin");
-  } else if (user.value?.roles?.includes("Asesor")) {
+  } else if (user.value?.rol === "Asesor") {
     await navigateTo("/asesor");
-  } else {
-    await navigateTo("/");
   }
 }
 

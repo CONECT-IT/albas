@@ -5,14 +5,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return navigateTo("/");
   }
 
-  if (!user.value?.roles) {
+  if (!user.value?.rol) {
     await fetchUser();
   }
 
   const requiredRoles = (to.meta.requiredRoles as string[]) || [];
 
   if (requiredRoles.length > 0) {
-    const hasRole = requiredRoles.some((role) => user.value?.roles?.includes(role));
+    const hasRole = requiredRoles.includes(user.value?.rol || "");
 
     if (!hasRole) {
       return navigateTo("/unauthorized");

@@ -1,24 +1,4 @@
-import { scryptSync } from "node:crypto";
 import { usePostgres } from "#imports";
-
-function verifyPassword(hashedPassword: string, plainPassword: string): boolean {
-  try {
-    const [saltB64, hashB64] = hashedPassword.split(".");
-    if (!saltB64 || !hashB64) {
-      return false;
-    }
-
-    const salt = Buffer.from(saltB64, "base64");
-    const expectedHash = Buffer.from(hashB64, "base64");
-
-    const actualHash = scryptSync(plainPassword, salt, 64);
-
-    return Buffer.compare(actualHash, expectedHash) === 0;
-  } catch (error) {
-    console.error("[ERROR] Error verificando password:", error);
-    return false;
-  }
-}
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -41,11 +21,10 @@ export default defineEventHandler(async (event) => {
       u.nombres,
       u.apellidos,
       u.correo,
-      u.estado,
       r.nombre_rol
     FROM usuarios u
     LEFT JOIN rol r ON u.id_rol = r.id_rol
-    WHERE u.nombre_usuario = ${username} AND u.estado = true
+    WHERE u.nombre_usuario = ${username}
   `.values();
 
   if (!userWithRoles || userWithRoles.length === 0) {
@@ -57,9 +36,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const userData = userWithRoles[0];
-  const isValidPassword = verifyPassword(userData[2], password);
 
-  if (!isValidPassword) {
+  if (!verificarContrasena(userData[2], password)) {
     await db.end();
     throw createError({
       statusCode: 401,
@@ -67,16 +45,15 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const roles = userData[7] ? [userData[7]] : [];
+  const rol = userData[6] || "";
 
   await setUserSession(event, {
     user: {
-      id: userData[0], // id_usuario
-      username: userData[1], // nombre_usuario
-      name: `${userData[3]} ${userData[4]}`, // nombres + apellidos
-      phone: undefined,
-      hireDate: undefined,
-      roles,
+      id: userData[0],
+      nombre_usuario: userData[1],
+      nombre_completo: `${userData[3]} ${userData[4]}`,
+      correo: userData[5],
+      rol,
     },
     loggedInAt: new Date(),
   });
@@ -88,9 +65,10 @@ export default defineEventHandler(async (event) => {
     message: "Login exitoso",
     user: {
       id: userData[0],
-      username: userData[1],
-      name: `${userData[3]} ${userData[4]}`,
-      roles,
+      nombre_usuario: userData[1],
+      nombre_completo: `${userData[3]} ${userData[4]}`,
+      correo: userData[5],
+      rol,
     },
   };
 });
