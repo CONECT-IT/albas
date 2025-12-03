@@ -9,8 +9,10 @@ export default defineEventHandler(async (event) => {
 
   console.log("POST /web - mode:");
 
-  const number = body[0];
+  const number = body;
   console.log(number);
-  return 1;
+  console.log(number["entry"][0]["changes"][0]);
+  
+  return "Webhook processed";
   // Escribir criterios de asignacion de asesor
 });
