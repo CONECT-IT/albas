@@ -6,13 +6,13 @@ export default defineNuxtPlugin(() => {
 
     const redirectToRoleDashboard = async () => {
       if (loggedIn.value) {
-        if (!user.value?.roles) {
+        if (!user.value?.rol) {
           await fetchUser();
         }
 
         if (user.value?.roles?.includes("Administrador")) {
           await navigateTo("/admin");
-        } else if (user.value?.roles?.includes("Asesor")) {
+        } else if (user.value?.rol?.includes("Asesor")) {
           await navigateTo("/asesor");
         }
       }
