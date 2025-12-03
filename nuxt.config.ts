@@ -14,6 +14,13 @@ export default defineNuxtConfig({
       openAPI: true,
     },
   },
+  // AUTO-IMPORT DE COMPONENTES ACTIVADO
+  components: [
+    {
+      path: "~/components",
+      pathPrefix: false,
+    },
+  ],
   runtimeConfig: {
     session: {
       name: "nuxt-session",
