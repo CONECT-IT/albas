@@ -1,9 +1,4 @@
-import { requireAuth } from "../../utils/auth";
-import { usePostgres } from "#imports";
-
 export default defineEventHandler(async (event) => {
-  await requireAuth()(event);
-
   const user = event.context.user;
   const db = usePostgres();
 
