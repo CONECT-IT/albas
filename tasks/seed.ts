@@ -3,7 +3,7 @@ import postgres from "postgres";
 import fs from "node:fs";
 import path from "node:path";
 
-function hashPassword(password: string) {
+function hashContrasena(password: string): string {
   const salt = randomBytes(16);
   const hash = scryptSync(password, salt, 64);
   return salt.toString("base64") + "." + hash.toString("base64");
@@ -28,7 +28,7 @@ async function seed() {
   `;
 
   for (const user of plainPasswordUsers) {
-    const hashedPassword = hashPassword(user.contrasena);
+    const hashedPassword = hashContrasena(user.contrasena);
 
     await sql`
       UPDATE usuarios
