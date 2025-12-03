@@ -1,10 +1,9 @@
-export interface User {
+export interface Usuario {
   id_usuario: string;
   nombre_usuario: string;
+  contrasena: string;
+  correo: string;
   nombres: string;
   apellidos: string;
-  correo: string;
   id_rol?: string;
-  nombre_rol?: string;
-  createdAt?: string;
 }
