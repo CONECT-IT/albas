@@ -1,4 +1,6 @@
-import { getQuery } from "h3";
+import { getQuery, setResponseStatus, setResponseHeader } from "h3";
+
+let VERIFY_TOKEN = "123456";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -6,16 +8,16 @@ export default defineEventHandler(async (event) => {
   const challenge = query["hub.challenge"];
   const token = query["hub.verify_token"];
 
-  console.log("GET /webhook - mode:", mode, "token:", token);
-
-  if (mode === "subscribe") {
-    console.log("✓ Webhook verified successfully!");
-    const res = challenge;
-    return res;
+  /* Aceptar conexión si conoce el token de verificación y esta en modo de subscipción */
+  if (mode === "subscribe" && VERIFY_TOKEN == token) {
+    console.log("Webhook verified");
+    setResponseStatus(event, 200);
+    setResponseHeader(event, "Content-Type", "text/plain");
+    return challenge;
   } else {
+    setResponseStatus(event, 400);
     return {
-      status: 400,
-      message: "no funciono",
+      message: "Verification failed. Tokens do not match or mode is not supported.",
     };
   }
 });
