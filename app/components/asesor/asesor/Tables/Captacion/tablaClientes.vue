@@ -1,14 +1,5 @@
 <script setup lang="ts">
 import { ref, defineEmits } from "vue";
-
-//--------------------------------Importar todos los formularios------------------------------
-import VerHistorialForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import VerTerrenosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import SubirContratoForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import VerComentariosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import EditarLeadClienteForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import ConfirmarGuardar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarGuardar.vue";
-import ConfirmarEliminar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarEliminar.vue";
 // Props
 interface LeadClientes {
   id: number;
@@ -29,13 +20,13 @@ const confirmarRefEliminar = ref<InstanceType<typeof ConfirmarEliminar> | null>(
 // Modal - HISTORIAL
 const showVerHistorialForm = ref(false);
 // Modal - PROPIEDADES
-const showVerTerrenosForm = ref(false);
+const showVerPropiedadForm = ref(false);
 // Modal - CONTRATO
 const showSubirContratoForm = ref(false);
 // Modal - OBSERVACION
-const showVerComentariosForm = ref(false);
+const showVerObservacionForm = ref(false);
 // Modal - EDITAR LEAD
-const showEditarLeadClienteForm = ref(false);
+const showEditarLeadForm = ref(false);
 
 // Lead seleccionado
 const selectedCliente = ref<LeadClientes | null>(null);
@@ -45,10 +36,10 @@ const openForm = (cliente: LeadClientes, formType: string) => {
   selectedCliente.value = cliente;
   const formMap: { [key: string]: any } = {
     verHistorial: showVerHistorialForm,
-    verTerrenos: showVerTerrenosForm,
+    verPropiedad: showVerPropiedadForm,
     subirContrato: showSubirContratoForm,
-    verComentarios: showVerComentariosForm,
-    editarLeadCliente: showEditarLeadClienteForm,
+    verObservacion: showVerObservacionForm,
+    editarLead: showEditarLeadForm,
   };
   const form = formMap[formType];
   if (form) form.value = true;
@@ -58,10 +49,10 @@ const openForm = (cliente: LeadClientes, formType: string) => {
 const closeForm = (formType: string) => {
   const formMap: { [key: string]: any } = {
     verHistorial: showVerHistorialForm,
-    verTerrenos: showVerTerrenosForm,
+    verPropiedad: showVerPropiedadForm,
     subirContrato: showSubirContratoForm,
-    verComentarios: showVerComentariosForm,
-    editarLeadCliente: showEditarLeadClienteForm,
+    verObservacion: showVerObservacionForm,
+    editarLead: showEditarLeadForm,
   };
   const form = formMap[formType];
   if (form) form.value = false;
@@ -154,7 +145,7 @@ const closeForm = (formType: string) => {
         <span class="flex items-center space-x-1 -ml-18">
           <!--VER INFORMACION PROPIEDAD-->
             <button
-               @click="openForm(cliente, 'verTerrenos')"
+               @click="openForm(cliente, 'verPropiedad')"
               class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 ml-3"
             >
               <svg
@@ -208,7 +199,7 @@ const closeForm = (formType: string) => {
         <span class="flex items-center space-x-1 -ml-18">
             <!--Ver Observacion-->
             <button
-              @click="openForm(cliente, 'verComentarios')"
+              @click="openForm(cliente, 'verObservacion')"
               class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 ml-13"
             >
               <svg
@@ -235,9 +226,9 @@ const closeForm = (formType: string) => {
 
 <!---------BOTON ACCIONES--------->
         <span class="flex space-x-2">
-            <!--Editar Visita-->
+            <!--Editar lead-->
             <button
-              @click="openForm(cliente, 'editarLeadCliente')"
+              @click="openForm(cliente, 'editarLead')"
               class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 -ml-1"
             >
               <svg
@@ -287,10 +278,10 @@ const closeForm = (formType: string) => {
       @close="closeForm('verHistorial')"
     />
 <!-- MODAL PROPIEDADES -->
-    <VerTerrenosForm
-      v-if="showVerTerrenosForm"
+    <VerPropiedadForm
+      v-if="showVerPropiedadForm"
       :cita="selectedCliente"
-      @close="closeForm('verTerrenos')"
+      @close="closeForm('verPropiedad')"
     />
 <!--MODAL CONTRATO -->
     <SubirContratoForm
@@ -300,16 +291,16 @@ const closeForm = (formType: string) => {
     />
 
 <!--MODAL OBSERVACIONES-->
-    <VerComentariosForm
-       v-if="showVerComentariosForm"
+    <VerObservacionForm
+       v-if="showVerObservacionForm"
         :cita="selectedCliente"
-      @close="closeForm('verComentarios')"
+      @close="closeForm('verObservacion')"
     />
 <!--MODAL ACCIONES -->
-    <EditarLeadClienteForm
-      v-if="showEditarLeadClienteForm"
+    <EditarLeadForm
+      v-if="showEditarLeadForm"
       :cita="selectedCliente"
-      @close="closeForm('editarLeadCliente')"
+      @close="closeForm('editarLead')"
     />
     <ConfirmarEliminar ref="confirmarRefEliminar" />
   </div>

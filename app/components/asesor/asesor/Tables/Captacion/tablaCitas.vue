@@ -1,20 +1,5 @@
 <script setup lang="ts">
 import { ref } from "vue";
-
-//--------------------------------Importar todos los formularios------------------------------
-
-import VisitasForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para agregarVisitas-tablaCitas
-import EditarVisitasForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para editarVisitas-tablaCitas
-import VerVisitaAgendadaForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para VerVisitas-tablaCitas
-import GastosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para AgregarGastos-tablaCitas
-import EditarGastosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para EditarGastos-tablaCitas
-import VerGastosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para VerGastos-tablaCitas
-import ObservacionGastosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para agregarObservacion-tablaCitas
-import EditarObservacionGastosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para EditarObservacion-tablaCitas
-import VerObservacionGastosForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para VerObservacion-tablaCitas
-import EditarLeadCitaForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para EditarLeadCita-tablaCitas
-import ConfirmarGuardar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarGuardar.vue";
-import ConfirmarEliminar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarEliminar.vue";
 // Props
 interface LeadCitas {
   id: number;
@@ -35,9 +20,10 @@ const confirmarRefGuardar = ref<InstanceType<typeof ConfirmarGuardar> | null>(nu
 const confirmarRefEliminar = ref<InstanceType<typeof ConfirmarEliminar> | null>(null);
 //---------------------------------------------------MOSTRAR MODAL --------------------------------------------------------------------
 // Modal - VISITAS
-const showVisitasForm = ref(false);
-const showEditarVisitasForm = ref(false);
-const showVerVisitaAgendadaForm = ref(false);
+// const showVisitaCitasForm = ref(false);
+const showVisitaForm = ref(false);
+const showEditarVisitaForm = ref(false);
+const showVerVisitaForm = ref(false);
 
 // Modal - GASTOS
 const showGastosForm = ref(false);
@@ -45,11 +31,11 @@ const showEditarGastosForm = ref(false);
 const showVerGastosForm = ref(false);
 
 // Modal - OBSEVACIONES
-const showObservacionGastosForm = ref(false);
-const showEditarObservacionGastosForm = ref(false);
-const showVerObservacionGastosForm = ref(false);
+const showObservacionForm = ref(false);
+const showEditarObservacionForm = ref(false);
+const showVerObservacionForm = ref(false);
 // Modal - ACCIONES
-const showEditarLeadCitaForm = ref(false);
+const showEditarLeadForm = ref(false);
 
 // Lead seleccionado
 const selectedCita = ref<LeadCitas | null>(null);
@@ -58,16 +44,16 @@ const selectedCita = ref<LeadCitas | null>(null);
 const openForm = (cita: LeadCitas, formType: string) => {
   selectedCita.value = cita;
   const formMap: { [key: string]: any } = {
-    visitas: showVisitasForm,
-    editarVisitas: showEditarVisitasForm,
-    verVisitaAgendada: showVerVisitaAgendadaForm,
+    visita: showVisitaForm,
+    editarVisita: showEditarVisitaForm,
+    verVisita: showVerVisitaForm,
     gastos: showGastosForm,
     editarGastos: showEditarGastosForm,
     verGastos: showVerGastosForm,
-    observacionGastos: showObservacionGastosForm,
-    editarObservacionGastos: showEditarObservacionGastosForm,
-    verObservacionGastos: showVerObservacionGastosForm,
-    editarLeadCita: showEditarLeadCitaForm,
+    observacion: showObservacionForm,
+    editarObservacion: showEditarObservacionForm,
+    verObservacion: showVerObservacionForm,
+    editarLead: showEditarLeadForm,
   };
   if (formMap[formType]) formMap[formType].value = true;
 };
@@ -75,16 +61,16 @@ const openForm = (cita: LeadCitas, formType: string) => {
 // Función para cerrar modal
 const closeForm = (formType: string) => {
   const formMap: { [key: string]: any } = {
-    visitas: showVisitasForm,
-    editarVisitas: showEditarVisitasForm,
-    verVisitaAgendada: showVerVisitaAgendadaForm,
+    visita: showVisitaForm,
+    editarVisita: showEditarVisitaForm,
+    verVisita: showVerVisitaForm,
     gastos: showGastosForm,
     editarGastos: showEditarGastosForm,
     verGastos: showVerGastosForm,
-    observacionGastos: showObservacionGastosForm,
-    editarObservacionGastos: showEditarObservacionGastosForm,
-    verObservacionGastos: showVerObservacionGastosForm,
-    editarLeadCita: showEditarLeadCitaForm,
+    observacion: showObservacionForm,
+    editarObservacion: showEditarObservacionForm,
+    verObservacion: showVerObservacionForm,
+    editarLead: showEditarLeadForm,
   };
   if (formMap[formType]) formMap[formType].value = false;
 };
@@ -127,7 +113,7 @@ const closeForm = (formType: string) => {
         <span class="flex items-center space-x-1 -ml-18">
           <!-- Agregar Visitas -->
           <button
-            @click="openForm(cita, 'visitas')"
+            @click="openForm(cita, 'visita')"
             class="bg-negro-primario rounded-full flex items-center justify-center w-6 h-6 text-blanco-primario shrink-0 -ml-1"
             title="Agregar Propiedad"
           >
@@ -145,7 +131,7 @@ const closeForm = (formType: string) => {
 
           <!-- Editar Visitas -->
           <button
-            @click="openForm(cita, 'editarVisitas')"
+            @click="openForm(cita, 'editarVisita')"
             class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 ml-1"
             title="Editar Propiedad"
           >
@@ -167,7 +153,7 @@ const closeForm = (formType: string) => {
 
           <!-- Ver Visitas -->
           <button
-            @click="openForm(cita, 'verVisitaAgendada')"
+            @click="openForm(cita, 'verVisita')"
             class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 ml-1"
             title="Ver Propiedad"
           >
@@ -267,7 +253,7 @@ const closeForm = (formType: string) => {
         <span class="flex items-center space-x-1 -ml-18">
           <!-- Agregar Observación -->
           <button
-            @click="openForm(cita, 'observacionGastos')"
+            @click="openForm(cita, 'observacion')"
             class="bg-negro-primario rounded-full flex items-center justify-center w-6 h-6 text-blanco-primario shrink-0 ml-9"
             title="Agregar Observación"
           >
@@ -285,7 +271,7 @@ const closeForm = (formType: string) => {
 
           <!-- Editar Observación -->
           <button
-            @click="openForm(cita, 'editarObservacionGastos')"
+            @click="openForm(cita, 'editarObservacion')"
             class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 ml-1"
             title="Editar Observación"
           >
@@ -307,7 +293,7 @@ const closeForm = (formType: string) => {
 
           <!-- Ver Observación -->
           <button
-            @click="openForm(cita, 'verObservacionGastos')"
+            @click="openForm(cita, 'verObservacion')"
             class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 -ml-1"
             title="Ver Observación"
           >
@@ -344,7 +330,7 @@ const closeForm = (formType: string) => {
         <span class="flex space-x-2">
           <!-- Editar Lead -->
           <button
-            @click="openForm(cita, 'editarLeadCita')"
+            @click="openForm(cita, 'editarLead')"
             class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 ml-7"
             title="Editar Lead"
           >
@@ -416,22 +402,22 @@ const closeForm = (formType: string) => {
 
 <!--------------------------------------------------------------MODAl-------------------------------------------------------------->
 <!-- MODALES - VISITAS -->
-    <VisitasForm
-       v-if="showVisitasForm"
+    <VisitaForm
+       v-if="showVisitaForm"
         :cita="selectedCita"
-      @close="closeForm('visitas')"
+      @close="closeForm('visita')"
     />
 
-    <EditarVisitasForm
-      v-if="showEditarVisitasForm"
+    <EditarVisitaForm
+      v-if="showEditarVisitaForm"
       :cita="selectedCita"
-      @close="closeForm('editarVisitas')"
+      @close="closeForm('editarVisita')"
     />
 
-    <VerVisitaAgendadaForm
-      v-if="showVerVisitaAgendadaForm"
+    <VerVisitaForm
+      v-if="showVerVisitaForm"
       :cita="selectedCita"
-      @close="closeForm('verVisitaAgendada')"
+      @close="closeForm('verVisita')"
     />
 
 <!-- MODALES - GASTOS-->
@@ -454,29 +440,29 @@ const closeForm = (formType: string) => {
     />
 
 <!-- MODALES - OBSERVACIÓN -->
-    <ObservacionGastosForm
-      v-if="showObservacionGastosForm"
+    <ObservacionForm
+      v-if="showObservacionForm"
       :cita="selectedCita"
-      @close="closeForm('observacionGastos')"
+      @close="closeForm('observacion')"
     />
 
-    <EditarObservacionGastosForm
-      v-if="showEditarObservacionGastosForm"
+    <EditarObservacionForm
+      v-if="showEditarObservacionForm"
       :cita="selectedCita"
-      @close="closeForm('editarObservacionGastos')"
+      @close="closeForm('editarObservacion')"
     />
 
-    <VerObservacionGastosForm
-      v-if="showVerObservacionGastosForm"
+    <VerObservacionForm
+      v-if="showVerObservacionForm"
       :cita="selectedCita"
-      @close="closeForm('verObservacionGastos')"
+      @close="closeForm('verObservacion')"
     />
 
 <!-- MODALES - EDITAR LEAD -->
-    <EditarLeadCitaForm
-      v-if="showEditarLeadCitaForm"
+    <EditarLeadForm
+      v-if="showEditarLeadForm"
       :cita="selectedCita"
-      @close="closeForm('editarLeadCita')"
+      @close="closeForm('editarLead')"
     />
     <ConfirmarGuardar ref="confirmarRefGuardar" />
     <ConfirmarEliminar ref="confirmarRefEliminar" />

@@ -1,13 +1,5 @@
 <script setup lang="ts">
 import { ref } from "vue";
-
-/*---------------------------------------importaciones--------------------------------*/
-
-import NuevoLeadForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue"; //Formulario para agregar Nuevo Lead de Captacion
-import TablaLeads from "~/components/asesor/asesor/Tables/Captacion/tablaLeads.vue"; //Componente reutilizable para tabla de leads
-import TablaCitas from "~/components/asesor/asesor/Tables/Captacion/tablaCitas.vue"; //Componente reutilizable para tabla de Citas
-import TablaClientes from "~/components/asesor/asesor/Tables/Captacion/tablaClientes.vue"; //Componente reutilizable para tabla de Clientes
-
 // Uso de diseño asesor
 definePageMeta({
   layout: "asesor",
@@ -19,6 +11,17 @@ const setTab = (tab: string) => (currentTab.value = tab);
 
 //Modal agregar Nuevo Lead
 const showNuevoLeadForm = ref(false);
+
+const nuevoLeadForm = (nuevoLead: any) => {
+  leads.value.push({
+    id: leads.value.length + 1,
+    nombre: nuevoLead.nombre,
+    celular: nuevoLead.celular,
+    fecha: nuevoLead.fecha,
+    tipo: nuevoLead.tipo,
+    estado: "seguimiento",
+  });
+};
 
 //---------------------------------------------------DATOS GENERADOS(Adaptar)--------------------------------------------------------------------
 // Lead único en Leads
@@ -51,7 +54,7 @@ const pasarLeadACitas = (lead: any) => {
   });
 
   // Remover de leads
-  leads.value = [];
+  leads.value = leads.value.filter(l => l.id !== lead.id);
 };
 
 // PASAR DE CITAS → CLIENTES
@@ -66,7 +69,7 @@ const pasarCitaAClientes = (cita: any) => {
   });
 
   // Remover de citas
-  citas.value = [];
+  citas.value = citas.value.filter((c) => c.id !== cita.id);
 };
 
 const store = {
@@ -154,6 +157,6 @@ const VendidoClientes = ["seleccionar", "No", "Si"];
     </div>
 
     <!-- Modal Agregar Nuevo Lead -->
-    <NuevoLeadForm v-if="showNuevoLeadForm" @close="showNuevoLeadForm = false" />
+    <NuevoLeadForm v-if="showNuevoLeadForm" @close="showNuevoLeadForm = false" @crear="nuevoLeadForm" />
   </div>
 </template>
