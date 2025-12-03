@@ -1,14 +1,14 @@
-
-DROP TABLE IF EXISTS firma CASCADE;
+DROP TABLE IF EXISTS conversiones CASCADE;
 DROP TABLE IF EXISTS interesado CASCADE;
 DROP TABLE IF EXISTS usuario_vendedor CASCADE;
+DROP TABLE IF EXISTS usuario_comprador CASCADE;
 DROP TABLE IF EXISTS propiedad_asesor CASCADE;
-DROP TABLE IF EXISTS persona_categoria CASCADE;
 DROP TABLE IF EXISTS citas CASCADE;
 DROP TABLE IF EXISTS contrato CASCADE;
 DROP TABLE IF EXISTS propiedad CASCADE;
-DROP TABLE IF EXISTS personas CASCADE;
 DROP TABLE IF EXISTS categoria_persona CASCADE;
+DROP TABLE IF EXISTS categoria CASCADE;
+DROP TABLE IF EXISTS personas CASCADE;
 DROP TABLE IF EXISTS usuarios CASCADE;
 DROP TABLE IF EXISTS rol CASCADE;
 
@@ -25,24 +25,31 @@ CREATE TABLE usuarios (
     correo VARCHAR(100) NOT NULL UNIQUE,
     nombres VARCHAR(100),
     apellidos VARCHAR(100),
-    nombre_completo VARCHAR(200),
-    estado BOOLEAN DEFAULT TRUE,
+    supervisor_id INTEGER NULL,
     id_rol INTEGER NOT NULL,
-    FOREIGN KEY (id_rol) REFERENCES rol(id_rol) ON DELETE RESTRICT
+    FOREIGN KEY (id_rol) REFERENCES rol(id_rol) ON DELETE RESTRICT,
+    FOREIGN KEY (supervisor_id) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
 );
 
 CREATE TABLE personas (
     id_persona SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     celular VARCHAR(20),
-    edad INTEGER CHECK (edad BETWEEN 18 AND 99),
     tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('Cliente', 'Referido', 'Lead Alvas', 'Lead Propio')),
     fecha_captacion DATE DEFAULT CURRENT_DATE
 );
 
-CREATE TABLE categoria_persona (
+CREATE TABLE categoria (
     id_categoria SERIAL PRIMARY KEY,
-    nombre_rol VARCHAR(50) NOT NULL UNIQUE CHECK (nombre_rol IN ('Vendedor', 'Comprador'))
+    nombre_categoria VARCHAR(50) NOT NULL UNIQUE CHECK (nombre_categoria IN ('Vendedor', 'Comprador'))
+);
+
+CREATE TABLE categoria_persona (
+    id_persona INTEGER NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    PRIMARY KEY (id_persona, id_categoria),
+    FOREIGN KEY (id_persona) REFERENCES personas(id_persona) ON DELETE CASCADE,
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria) ON DELETE CASCADE
 );
 
 CREATE TABLE propiedad (
@@ -68,7 +75,7 @@ CREATE TABLE citas (
     id_cita SERIAL PRIMARY KEY,
     fecha_agendada TIMESTAMP NOT NULL,
     observacion TEXT,
-    estado_visita_guiada VARCHAR(30) NOT NULL 
+    estado_visita_guiada VARCHAR(30) NOT NULL
         CHECK (estado_visita_guiada IN ('Reprogramó', 'Canceló', 'No realizó visita', 'Realizó visita')),
     id_persona INTEGER NOT NULL,
     id_usuario INTEGER NOT NULL,
@@ -80,6 +87,15 @@ CREATE TABLE interesado (
     id_propiedad INTEGER NOT NULL,
     id_persona INTEGER NOT NULL,
     vendido BOOLEAN DEFAULT FALSE,
+    separado BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (id_propiedad, id_persona),
+    FOREIGN KEY (id_propiedad) REFERENCES propiedad(id_propiedad) ON DELETE CASCADE,
+    FOREIGN KEY (id_persona) REFERENCES personas(id_persona) ON DELETE CASCADE
+);
+
+CREATE TABLE usuario_comprador (
+    id_usuario INTEGER NOT NULL,
+    id_persona INTEGER NOT NULL,
     estado_comprador VARCHAR(30) DEFAULT 'Aún no se ha contactado'
         CHECK (estado_comprador IN (
             'Aún no se ha contactado',
@@ -88,9 +104,9 @@ CREATE TABLE interesado (
             'Venta concretada',
             'No está interesado'
         )),
-    separado BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY (id_propiedad, id_persona),
-    FOREIGN KEY (id_propiedad) REFERENCES propiedad(id_propiedad) ON DELETE CASCADE,
+    observacion TEXT,
+    PRIMARY KEY (id_usuario, id_persona),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_persona) REFERENCES personas(id_persona) ON DELETE CASCADE
 );
 
@@ -99,26 +115,19 @@ CREATE TABLE usuario_vendedor (
     id_persona INTEGER NOT NULL,
     estado_vendedor VARCHAR(30) DEFAULT 'Seguimiento'
         CHECK (estado_vendedor IN ('Seguimiento', 'Cierre', 'No responde')),
-    fecha_asignacion DATE DEFAULT CURRENT_DATE,
+    observacion TEXT,
     PRIMARY KEY (id_usuario, id_persona),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_persona) REFERENCES personas(id_persona) ON DELETE CASCADE
 );
 
-CREATE TABLE propiedad_asesor (
-    id_propiedad INTEGER NOT NULL,
-    id_usuario INTEGER NOT NULL,
-    PRIMARY KEY (id_propiedad, id_usuario),
-    FOREIGN KEY (id_propiedad) REFERENCES propiedad(id_propiedad) ON DELETE CASCADE,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
-);
-
-CREATE TABLE persona_categoria (
+CREATE TABLE conversiones (
+    id_conversion SERIAL PRIMARY KEY,
     id_persona INTEGER NOT NULL,
-    id_categoria INTEGER NOT NULL,
-    PRIMARY KEY (id_persona, id_categoria),
+    id_usuario INTEGER NOT NULL,
+    fecha_conversion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tipo_anterior VARCHAR(20),
+    tipo_nuevo VARCHAR(20),
     FOREIGN KEY (id_persona) REFERENCES personas(id_persona) ON DELETE CASCADE,
-    FOREIGN KEY (id_categoria) REFERENCES categoria_persona(id_categoria) ON DELETE CASCADE
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
 );
-
-
