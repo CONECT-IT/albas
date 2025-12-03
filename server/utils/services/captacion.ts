@@ -96,9 +96,21 @@ export const captacionService = {
     return persona;
   },
 
-  // === OPERACIONES COMUNES ===
-  async actualizarPersona(id: number, data: Partial<{ nombre: string; celular: string }>) {
-    return await personaRepository.update(id, data);
+  async verificarGestion(usuarioId: number, personaId: number) {
+    const gestion = await gestionVendedorRepository.findOne(usuarioId, personaId);
+    if (!gestion) {
+      throw createError({ statusCode: 404, message: "No tienes acceso a esta persona" });
+    }
+    return gestion;
+  },
+
+  async actualizarPersona(
+    usuarioId: number,
+    personaId: number,
+    data: Partial<{ nombre: string; celular: string }>,
+  ) {
+    await this.verificarGestion(usuarioId, personaId);
+    return await personaRepository.update(personaId, data);
   },
 
   async actualizarGestion(
@@ -106,14 +118,16 @@ export const captacionService = {
     personaId: number,
     data: Partial<{ estado_vendedor: string; observacion: string }>,
   ) {
+    await this.verificarGestion(usuarioId, personaId);
     return await gestionVendedorRepository.update(usuarioId, personaId, data);
   },
 
   async obtenerGestion(usuarioId: number, personaId: number) {
-    return await gestionVendedorRepository.findOne(usuarioId, personaId);
+    return await this.verificarGestion(usuarioId, personaId);
   },
 
   async eliminarGestion(usuarioId: number, personaId: number) {
+    await this.verificarGestion(usuarioId, personaId);
     return await gestionVendedorRepository.delete(usuarioId, personaId);
   },
 };

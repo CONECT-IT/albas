@@ -8,9 +8,17 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const profile = await authService.getProfile(session.user.id);
+
   return {
     status: "success",
-    user: session.user,
+    user: {
+      id: profile.id_usuario,
+      nombre_usuario: profile.nombre_usuario,
+      nombre_completo: `${profile.nombres} ${profile.apellidos}`,
+      correo: profile.correo,
+      rol: profile.nombre_rol,
+    },
     loggedInAt: session.loggedInAt,
   };
 });

@@ -93,8 +93,21 @@ export const ventasService = {
     return persona;
   },
 
-  async actualizarPersona(id: number, data: Partial<{ nombre: string; celular: string }>) {
-    return await personaRepository.update(id, data);
+  async verificarGestion(usuarioId: number, personaId: number) {
+    const gestion = await gestionCompradorRepository.findOne(usuarioId, personaId);
+    if (!gestion) {
+      throw createError({ statusCode: 404, message: "No tienes acceso a esta persona" });
+    }
+    return gestion;
+  },
+
+  async actualizarPersona(
+    usuarioId: number,
+    personaId: number,
+    data: Partial<{ nombre: string; celular: string }>,
+  ) {
+    await this.verificarGestion(usuarioId, personaId);
+    return await personaRepository.update(personaId, data);
   },
 
   async actualizarGestion(
@@ -102,17 +115,20 @@ export const ventasService = {
     personaId: number,
     data: Partial<{ estado_comprador: string; observacion: string }>,
   ) {
+    await this.verificarGestion(usuarioId, personaId);
     return await gestionCompradorRepository.update(usuarioId, personaId, data);
   },
 
   async obtenerGestion(usuarioId: number, personaId: number) {
-    return await gestionCompradorRepository.findOne(usuarioId, personaId);
+    return await this.verificarGestion(usuarioId, personaId);
   },
 
   async eliminarGestion(usuarioId: number, personaId: number) {
+    await this.verificarGestion(usuarioId, personaId);
     return await gestionCompradorRepository.delete(usuarioId, personaId);
   },
 
+  // === INTERESADOS ===
   async listarInteresadosPorPropiedad(propiedadId: number) {
     return await interesadoRepository.findByPropiedad(propiedadId);
   },
