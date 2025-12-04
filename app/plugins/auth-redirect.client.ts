@@ -10,7 +10,7 @@ export default defineNuxtPlugin(() => {
           await fetchUser();
         }
 
-        if (user.value?.roles?.includes("Administrador")) {
+        if (user.value?.rol?.includes("Administrador")) {
           await navigateTo("/admin");
         } else if (user.value?.rol?.includes("Asesor")) {
           await navigateTo("/asesor");
