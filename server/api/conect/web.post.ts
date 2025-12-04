@@ -23,12 +23,9 @@ export default defineEventHandler(async (event) => {
     const { waName, waPhone } = getWhatsappInfo(body);
     const waPhoneNumber = waPhone.slice(2, waPhone.length);
 
-    console.log("Mensaje recibido con exito!");
-    console.log("El numero es: ", waPhoneNumber, " y el nombre es: ", waName);
-
     const personaRepetida = await captacionService.leadRepetido(waPhoneNumber);
     const esRepetido = personaRepetida.esRepetido;
-
+    
     if (esRepetido) {
       const { persona } = personaRepetida;
       const id_persona = persona.id_persona;
@@ -58,10 +55,59 @@ export default defineEventHandler(async (event) => {
         };
       }
     } else {
-      message = "si paso";
+      /* Asignar al asesor con menor carga */
+      const asesores = await asesorService.cargaAsesores();
+      
+      const asesorMenorCarga = asesores.reduce((prev: any, curr: any) => {
+        return prev.total_clientes < curr.total_clientes ? prev : curr;
+      });
+      const asesoresConMenorCarga = asesores.filter((a: any) => a.total_clientes === asesorMenorCarga.total_clientes);
+      
+      /* Ante empate de asesores, escoger al asesor con mejor rendimiento (conversion de clientes) */
+      if (asesoresConMenorCarga.length > 1) {
+
+        const rendimientoPromises = asesoresConMenorCarga.map(async (asesor) => {
+          const r = await asesorService.rendimientoAsesor(Number(asesor.id_usuario));
+          const rendimiento = (typeof r === "number") ? r : 0;
+          return { id_usuario: Number(asesor.id_usuario), rendimiento };
+        });
+
+        const asesoresConRendimiento = await Promise.all(rendimientoPromises);
+        const asesorMejorRendimiento = asesoresConRendimiento.reduce((prev: any, curr: any) => {
+          return prev.rendimiento > curr.rendimiento ? prev : curr;
+        });
+        const asesorAsignado = asesorMejorRendimiento.id_usuario;
+        const tipoLead: "Lead Alvas" | "Lead Propio" = "Lead Alvas";
+        const nuevoLead = {
+          nombre: waName,
+          celular: waPhoneNumber,
+          tipo: tipoLead,
+          id_usuario: Number(asesorAsignado),
+          observacion: "Lead asignado automáticamente por el sistema",
+        };
+        await captacionService.registrarLead(nuevoLead);
+        message = {
+          message: "Lead registrado exitosamente al asesor con mejor rendimiento.",
+        };
+      } else {
+        const asesorAsignado = asesoresConMenorCarga[0].id_usuario;
+
+        const tipoLead: "Lead Alvas" | "Lead Propio" = "Lead Alvas";
+        const nuevoLead = {
+          nombre: waName,
+          celular: waPhoneNumber,
+          tipo: tipoLead,
+          id_usuario: Number(asesorAsignado),
+          observacion: "Lead asignado automáticamente por el sistema",
+        };
+        await captacionService.registrarLead(nuevoLead);
+        message = {
+          message: "Lead registrado exitosamente al asesor con menor carga.",
+        }
+      }
     }
   } catch (error) {
-    message = { message: "algo paso", error };
+    message = { message: "Error durante las comprobaciones de asignación", error };
   }
 
   return message;

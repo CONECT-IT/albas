@@ -1,3 +1,5 @@
+import postgres, { RowList } from "postgres";
+
 export const captacionService = {
   // === LEADS VENDEDORES ===
   async listarLeads(usuarioId: number) {
@@ -33,8 +35,8 @@ export const captacionService = {
   },
 
   async leadRepetido(celular: string) {
-    const persona = (await personaRepository.findByNumber(celular)) as any | null;
-    return { persona: persona, esRepetido: persona !== null };
+    const persona = await personaRepository.findByNumber(celular);
+    return { persona: persona, esRepetido: (persona) ? true : false};
   },
 
   async leadActivo(id_lead: number) {

@@ -19,6 +19,20 @@ export const gestionVendedorRepository = {
     `;
   },
 
+  async getCargaVentas(){
+    const db = usePostgres();
+    return await db`
+      SELECT u.id_usuario, A.total_clientes
+      FROM (
+        SELECT uv.id_usuario, COUNT(uv.id_persona) AS total_clientes
+        FROM usuario_vendedor uv 
+        WHERE uv.estado_vendedor NOT IN ('Cierre', 'No responde')
+        GROUP BY uv.id_usuario
+      ) as A
+      RIGHT JOIN usuarios u ON u.id_usuario = A.id_usuario
+    `;
+  },
+
   async findByPersona(personaId: number) {
     const db = usePostgres();
     return await db`
@@ -31,7 +45,6 @@ export const gestionVendedorRepository = {
 
   async findByPersonaActiva(personaId: number) {
     const db = usePostgres();
-    // Buscar la última gestión activa (excluye cerradas y no responde)
     return await db`
       SELECT *
       FROM usuario_vendedor

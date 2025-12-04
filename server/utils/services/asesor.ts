@@ -27,6 +27,21 @@ export const asesorService = {
     `;
   },
 
+  async cargaAsesores() {
+    const cargas = await gestionVendedorRepository.getCargaVentas();
+    const asesores = Array.from(cargas || []);
+    return asesores;
+  },
+
+  async rendimientoAsesor(asesorId: number) {
+    const total_leads = await gestionVendedorRepository.findByAsesor(asesorId);
+    const total_clientes = total_leads.filter((tl: any) => tl.tipo === "Cliente");
+    const rendimiento = (total_leads.length > 0)
+      ? (total_clientes.length / total_leads.length) * 100
+      : 0;
+    return rendimiento;
+  },
+
   async obtener(id: number) {
     const asesor = await usuarioRepository.findById(id);
     if (!asesor || asesor.nombre_rol !== "Asesor") {
