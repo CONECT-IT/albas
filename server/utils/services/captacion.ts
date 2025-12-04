@@ -42,8 +42,12 @@ export const captacionService = {
   async leadActivo(id_lead: number) {
     const lead = await gestionVendedorRepository.findByPersona(id_lead);
     const safeLead = Array.from(lead || []);
-    const enSeguimiento = safeLead.filter((l => !['Cierre', 'No responde'].includes(l.estado_vendedor)));
-    const enTerminados = safeLead.filter((l => l.estado_vendedor && ['Cierre', 'No responde'].includes(l.estado_vendedor)));
+    const enSeguimiento = safeLead.filter(
+      (l) => !["Cierre", "No responde"].includes(l.estado_vendedor),
+    );
+    const enTerminados = safeLead.filter(
+      (l) => l.estado_vendedor && ["Cierre", "No responde"].includes(l.estado_vendedor),
+    );
     return { lead: enTerminados, esActivo: enSeguimiento.length > 0 };
   },
 
