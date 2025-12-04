@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
       const leadRepetido = await captacionService.leadActivo(id_persona);
       const esActivo = leadRepetido.esActivo;
       if (esActivo) {
-        setResponseStatus(event, 409);
+        setResponseStatus(event, 209);
         message = {
           message: "No se asignó, el lead ya existe y está en atencion activa.",
         };
