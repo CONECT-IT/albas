@@ -32,6 +32,17 @@ export const captacionService = {
     return persona;
   },
 
+  async leadRepetido(celular: string) {
+    const persona = (await personaRepository.findByNumber(celular)) as any | null;
+    return { persona, esRepetido: persona !== null };
+  },
+
+  async leadActivo(id_lead: number) {
+    const lead = (await gestionVendedorRepository.findByPersonaActiva(id_lead)) as any[] | null;
+    const safeLead = Array.isArray(lead) ? lead : [];
+    return { lead: safeLead, esActivo: safeLead.length > 0 };
+  },
+
   // === CLIENTES VENDEDORES ===
   async listarClientes(usuarioId: number) {
     const gestiones = await gestionVendedorRepository.findByAsesor(usuarioId);

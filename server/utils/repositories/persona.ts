@@ -17,6 +17,17 @@ export const personaRepository = {
     return persona ?? null;
   },
 
+  async findByNumber(number: string) {
+    const db = usePostgres();
+    return (
+      (await db`
+      SELECT id_persona, nombre, celular, tipo, fecha_captacion
+      FROM personas
+      WHERE celular = ${number}
+    `) ?? null
+    );
+  },
+
   async findByTipo(tipo: string) {
     const db = usePostgres();
     return await db`
