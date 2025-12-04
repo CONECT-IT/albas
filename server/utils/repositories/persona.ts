@@ -19,13 +19,13 @@ export const personaRepository = {
 
   async findByNumber(number: string) {
     const db = usePostgres();
-    return (
-      (await db`
+    const [persona] = await db`
       SELECT id_persona, nombre, celular, tipo, fecha_captacion
       FROM personas
       WHERE celular = ${number}
-    `) ?? null
-    );
+      LIMIT 1
+    `;
+    return persona ?? null;
   },
 
   async findByTipo(tipo: string) {

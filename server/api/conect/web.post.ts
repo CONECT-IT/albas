@@ -17,52 +17,54 @@ interface WhatsappMessage {
 }
 
 export default defineEventHandler(async (event) => {
-
   const body = await readBody(event);
-  
+  let message = {};
   try {
-
     const { waName, waPhone } = getWhatsappInfo(body);
-    const waPhoneNumber = waPhone.slice(2, -1);
+    const waPhoneNumber = waPhone.slice(2, waPhone.length);
 
     console.log("Mensaje recibido con exito!");
     console.log("El numero es: ", waPhoneNumber, " y el nombre es: ", waName);
 
-    const personaRepetida = await captacionService.leadRepetido(waPhone);
+    const personaRepetida = await captacionService.leadRepetido(waPhoneNumber);
     const esRepetido = personaRepetida.esRepetido;
 
     if (esRepetido) {
-      const persona = personaRepetida.persona;
+      const { persona } = personaRepetida;
       const id_persona = persona.id_persona;
+
       const leadRepetido = await captacionService.leadActivo(id_persona);
       const esActivo = leadRepetido.esActivo;
 
       if (esActivo) {
         setResponseStatus(event, 409);
-        setResponseHeader(
-          event,
-          "message",
-          "No se asignó, el lead ya existe y está en atencion activa.",
-        );
+        message = {
+          message: "No se asignó, el lead ya existe y está en atencion activa.",
+        };
       } else {
-        const asesor = leadRepetido.lead[0].id_usuario;
+        const asesorAnterior = leadRepetido.lead?.[0].id_usuario;
+
         const tipoLead: "Lead Alvas" | "Lead Propio" = "Lead Alvas";
         const nuevoLead = {
           nombre: persona.nombre,
           celular: waPhoneNumber,
           tipo: tipoLead,
-          id_usuario: Number(asesor),
+          id_usuario: Number(asesorAnterior),
           observacion: "Lead asignado automáticamente por el sistema",
         };
         await captacionService.registrarLead(nuevoLead);
+        message = {
+          message: "Lead registrado exitosamente al mismo asesor.",
+        };
       }
     } else {
-      console.log("El lead con numero ", waPhone, " es nuevo y puede ser registrado.");
+      message = "si paso";
     }
   } catch (error) {
-  } finally {
+    message = { message: "algo paso", error };
   }
-  return event;
+
+  return message;
 });
 
 function getWhatsappInfo(json: WhatsappMessage) {

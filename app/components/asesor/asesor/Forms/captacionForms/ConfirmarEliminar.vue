@@ -13,7 +13,7 @@ const confirmarEliminar = (accion: Function) => {
 // Confirmar
 const aceptar = () => {
   if (accionAConfirmar) accionAConfirmar();
-  emit("confirmar");  // <── SE NOTIFICA AL PADRE
+  emit("confirmar"); // <── SE NOTIFICA AL PADRE
   cerrar();
 };
 // Cancelar
@@ -26,7 +26,6 @@ const cerrar = () => {
 defineExpose({
   confirmarEliminar,
 });
-
 </script>
 <template>
   <div v-if="show" class="fixed inset-0 z-50">
@@ -36,9 +35,7 @@ defineExpose({
       @click="cerrar"
     ></div>
     <!--MODAL -->
-    <div
-      class="relative z-50 bg-white rounded-xl p-6 w-80 mx-auto mt-40 text-center shadow-xl"
-    >
+    <div class="relative z-50 bg-white rounded-xl p-6 w-80 mx-auto mt-40 text-center shadow-xl">
       <h2 class="text-lg font-bold mb-2">¿Eliminar elemento?</h2>
       <p class="text-sm mb-6">Esta acción no se puede deshacer.</p>
       <div class="flex justify-between">

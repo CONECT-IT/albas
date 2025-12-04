@@ -12,7 +12,10 @@ export default defineEventHandler(async (event) => {
   } else if (estado_visita_guiada) {
     cita = await citasService.actualizarEstado(id_cita, estado_visita_guiada, observacion);
   } else {
-    throw createError({ statusCode: 400, message: "Debe enviar fecha_agendada o estado_visita_guiada" });
+    throw createError({
+      statusCode: 400,
+      message: "Debe enviar fecha_agendada o estado_visita_guiada",
+    });
   }
 
   return { status: "success", message: "Cita actualizada", data: cita };

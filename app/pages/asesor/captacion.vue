@@ -54,7 +54,7 @@ const pasarLeadACitas = (lead: any) => {
   });
 
   // Remover de leads
-  leads.value = leads.value.filter(l => l.id !== lead.id);
+  leads.value = leads.value.filter((l) => l.id !== lead.id);
 };
 
 // PASAR DE CITAS → CLIENTES
@@ -168,6 +168,10 @@ const VendidoClientes = ["seleccionar", "No", "Si"];
     </div>
 
     <!-- Modal Agregar Nuevo Lead -->
-    <NuevoLeadForm v-if="showNuevoLeadForm" @close="showNuevoLeadForm = false" @crear="nuevoLeadForm" />
+    <NuevoLeadForm
+      v-if="showNuevoLeadForm"
+      @close="showNuevoLeadForm = false"
+      @crear="nuevoLeadForm"
+    />
   </div>
 </template>

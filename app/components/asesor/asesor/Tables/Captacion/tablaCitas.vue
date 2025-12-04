@@ -402,13 +402,9 @@ const closeForm = (formType: string) => {
       </div>
     </div>
 
-<!--------------------------------------------------------------MODAl-------------------------------------------------------------->
-<!-- MODALES - VISITAS -->
-    <VisitaForm
-       v-if="showVisitaForm"
-        :cita="selectedCita"
-      @close="closeForm('visita')"
-    />
+    <!--------------------------------------------------------------MODAl-------------------------------------------------------------->
+    <!-- MODALES - VISITAS -->
+    <VisitaForm v-if="showVisitaForm" :cita="selectedCita" @close="closeForm('visita')" />
 
     <EditarVisitaForm
       v-if="showEditarVisitaForm"
@@ -416,11 +412,7 @@ const closeForm = (formType: string) => {
       @close="closeForm('editarVisita')"
     />
 
-    <VerVisitaForm
-      v-if="showVerVisitaForm"
-      :cita="selectedCita"
-      @close="closeForm('verVisita')"
-    />
+    <VerVisitaForm v-if="showVerVisitaForm" :cita="selectedCita" @close="closeForm('verVisita')" />
 
     <!-- MODALES - GASTOS-->
     <GastosForm v-if="showGastosForm" :cita="selectedCita" @close="closeForm('gastos')" />
@@ -433,7 +425,7 @@ const closeForm = (formType: string) => {
 
     <VerGastosForm v-if="showVerGastosForm" :cita="selectedCita" @close="closeForm('verGastos')" />
 
-<!-- MODALES - OBSERVACIÓN -->
+    <!-- MODALES - OBSERVACIÓN -->
     <ObservacionGastosForm
       v-if="showObservacionGastosForm"
       :cita="selectedCita"
@@ -452,7 +444,7 @@ const closeForm = (formType: string) => {
       @close="closeForm('verObservacion')"
     />
 
-<!-- MODALES - EDITAR LEAD -->
+    <!-- MODALES - EDITAR LEAD -->
     <EditarLeadCitaForm
       v-if="showEditarLeadCitaForm"
       :cita="selectedCita"

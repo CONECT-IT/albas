@@ -267,7 +267,9 @@ const handleSubmit = () => {
           <!-- Inputs pequeños -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Propiedad</label>
+              <label class="block text-xs font-semibold text-gray-600 mb-1"
+                >Tipo de Propiedad</label
+              >
               <input
                 v-model="carNombre"
                 type="text"

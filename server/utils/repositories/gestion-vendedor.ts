@@ -31,10 +31,13 @@ export const gestionVendedorRepository = {
 
   async findByPersonaActiva(personaId: number) {
     const db = usePostgres();
+    // Buscar la última gestión activa (excluye cerradas y no responde)
     return await db`
       SELECT *
       FROM usuario_vendedor
-      WHERE id_persona = ${personaId} AND (estado_vendedor IN ('Cierre', 'No responde'))
+      WHERE id_persona = ${personaId} AND estado_vendedor NOT IN ('Cierre', 'No responde')
+      ORDER BY id_usuario DESC
+      LIMIT 1
     `;
   },
 

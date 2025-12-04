@@ -26,11 +26,8 @@ const guardarObservacion = () => {
 <template>
   <div class="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-40">
     <div class="bg-blanco-primario rounded-2xl shadow-xl w-[750px] p-8 relative">
-
       <!-- Botón cerrar -->
-      <button @click="emit('close')" class="absolute top-4 right-4 text-2xl">
-        ✕
-      </button>
+      <button @click="emit('close')" class="absolute top-4 right-4 text-2xl">✕</button>
 
       <!-- Título -->
       <h2 class="text-2xl font-semibold mb-1">Editar Observación</h2>
@@ -56,20 +53,14 @@ const guardarObservacion = () => {
 
       <!-- Botones -->
       <div class="flex justify-end space-x-4">
-
-        <button
-          @click="emit('close')"
-          class="px-6 py-2 rounded-lg border"
-        >
-          Cancelar
-        </button>
+        <button @click="emit('close')" class="px-6 py-2 rounded-lg border">Cancelar</button>
 
         <button
           @click="guardarObservacion"
           class="px-6 py-2 rounded-lg bg-negro-primario text-blanco-primario flex items-center gap-2"
         >
           <span>
-             <svg
+            <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -89,9 +80,7 @@ const guardarObservacion = () => {
           </span>
           Guardar Cambios
         </button>
-
       </div>
-
     </div>
   </div>
 </template>

@@ -134,7 +134,8 @@ const guardarCambios = () => {
 <template>
   <!-- Fondo oscuro -->
   <div
-    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity" @click="$emit('close')"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity"
+    @click="$emit('close')"
   ></div>
 
   <!-- Contenedor del modal centrado -->

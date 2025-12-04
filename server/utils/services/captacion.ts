@@ -34,12 +34,12 @@ export const captacionService = {
 
   async leadRepetido(celular: string) {
     const persona = (await personaRepository.findByNumber(celular)) as any | null;
-    return { persona, esRepetido: persona !== null };
+    return { persona: persona, esRepetido: persona !== null };
   },
 
   async leadActivo(id_lead: number) {
-    const lead = (await gestionVendedorRepository.findByPersonaActiva(id_lead)) as any[] | null;
-    const safeLead = Array.isArray(lead) ? lead : [];
+    const lead = await gestionVendedorRepository.findByPersonaActiva(id_lead);
+    const safeLead = Array.from(lead || []);
     return { lead: safeLead, esActivo: safeLead.length > 0 };
   },
 
