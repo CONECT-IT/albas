@@ -1,162 +1,190 @@
 <script setup lang="ts">
-import { ref } from "vue";
-// Uso de diseño asesor
+import { ref } from 'vue'
+import type { 
+  LeadVendedor, 
+  CitaExpandida, 
+  ClienteConContrato,
+  TipoPersona,
+  EstadoVendedor,
+  EstadoVisitaGuiada
+} from '~~/shared/types'
+
 definePageMeta({
-  layout: "asesor",
-});
+  layout: 'asesor',
+})
 
-// Tabs actual,(Leads, Citas, Clientes)
-const currentTab = ref("Leads");
-const setTab = (tab: string) => (currentTab.value = tab);
+// Tab actual
+type TabType = 'Leads' | 'Citas' | 'Clientes'
+const currentTab = ref<TabType>('Leads')
+const setTab = (tab: TabType) => (currentTab.value = tab)
 
-//Modal agregar Nuevo Lead
-const showNuevoLeadForm = ref(false);
+// Modal nuevo lead
+const showNuevoLeadForm = ref(false)
 
-const nuevoLeadForm = (nuevoLead: any) => {
+// Datos reactivos tipados según el schema SQL
+const leads = ref<LeadVendedor[]>([
+  {
+    id_persona: 1,
+    nombre: 'Lead Ejemplo',
+    celular: '900000000',
+    tipo: 'Lead Propio',
+    fecha_captacion: '2025-01-01',
+    estado_vendedor: 'Seguimiento',
+    observacion: null,
+    id_usuario: 2
+  }
+])
+
+const citas = ref<CitaExpandida[]>([])
+const clientes = ref<ClienteConContrato[]>([])
+
+// Crear nuevo lead
+const handleCrearLead = (nuevoLead: { nombre: string; celular: string; fecha: string; tipo: TipoPersona }) => {
+  const newId = Math.max(...leads.value.map(l => l.id_persona), 0) + 1
   leads.value.push({
-    id: leads.value.length + 1,
+    id_persona: newId,
     nombre: nuevoLead.nombre,
     celular: nuevoLead.celular,
-    fecha: nuevoLead.fecha,
     tipo: nuevoLead.tipo,
-    estado: "seguimiento",
-  });
-};
+    fecha_captacion: nuevoLead.fecha,
+    estado_vendedor: 'Seguimiento',
+    observacion: null,
+    id_usuario: 2 // TODO: obtener del usuario logueado
+  })
+}
 
-//---------------------------------------------------DATOS GENERADOS(Adaptar)--------------------------------------------------------------------
-// Lead único en Leads
-const leads = ref([
-  {
-    id: 1,
-    nombre: "Lead Ejemplo",
-    celular: "900000000",
-    fecha: "01/01/2025",
-    tipo: "Propio",
-    estado: "Seguimiento",
-  },
-]);
+// Guardar lead (pasarlo a citas)
+const handleGuardarLead = (lead: LeadVendedor) => {
+  const newCita: CitaExpandida = {
+    id_cita: Date.now(),
+    fecha_agendada: new Date().toISOString(),
+    observacion: lead.observacion,
+    estado_visita_guiada: 'Realizó visita',
+    id_persona: lead.id_persona,
+    id_usuario: lead.id_usuario,
+    persona: {
+      id_persona: lead.id_persona,
+      nombre: lead.nombre,
+      celular: lead.celular,
+      tipo: lead.tipo,
+      fecha_captacion: lead.fecha_captacion
+    },
+    usuario: {
+      id_usuario: lead.id_usuario,
+      nombre_usuario: 'asesor',
+      contrasena: '',
+      correo: '',
+      nombres: null,
+      apellidos: null,
+      supervisor_id: null,
+      id_rol: 2
+    }
+  }
+  citas.value.push(newCita)
+  leads.value = leads.value.filter(l => l.id_persona !== lead.id_persona)
+}
 
-// Vacío: esperará al Guardar
-const citas = ref([]);
+// Guardar cita (pasarla a clientes)
+const handleGuardarCita = (cita: CitaExpandida) => {
+  const newCliente: ClienteConContrato = {
+    id_persona: cita.id_persona,
+    nombre: cita.persona.nombre,
+    celular: cita.persona.celular,
+    tipo: 'Cliente',
+    fecha_captacion: cita.persona.fecha_captacion
+  }
+  clientes.value.push(newCliente)
+  citas.value = citas.value.filter(c => c.id_cita !== cita.id_cita)
+}
 
-// Vacío: esperará al Guardar
-const clientes = ref([]);
+// Eliminar items
+const handleEliminarLead = (id: number) => {
+  leads.value = leads.value.filter(l => l.id_persona !== id)
+}
 
-// PASAR DE LEADS → CITAS
-const pasarLeadACitas = (lead: any) => {
-  citas.value.push({
-    id: citas.value.length + 1,
-    nombre: lead.nombre,
-    celular: lead.celular,
-    fecha: lead.fecha,
-    tipo: lead.tipo,
-    Estado: "realizado",
-  });
+const handleEliminarCita = (id: number) => {
+  citas.value = citas.value.filter(c => c.id_cita !== id)
+}
 
-  // Remover de leads
-  leads.value = leads.value.filter(l => l.id !== lead.id);
-};
+const handleEliminarCliente = (id: number) => {
+  clientes.value = clientes.value.filter(c => c.id_persona !== id)
+}
 
-// PASAR DE CITAS → CLIENTES
-const pasarCitaAClientes = (cita: any) => {
-  clientes.value.push({
-    id: clientes.value.length + 1,
-    nombre: cita.nombre,
-    celular: cita.celular,
-    fecha: cita.fecha,
-    tipo: cita.tipo,
-    Vendido: "seleccionar",
-  });
+// Actualizar estados
+const handleUpdateEstadoLead = (id: number, estado: EstadoVendedor) => {
+  const lead = leads.value.find(l => l.id_persona === id)
+  if (lead) lead.estado_vendedor = estado
+}
 
-  // Remover de citas
-  citas.value = citas.value.filter((c) => c.id !== cita.id);
-};
+const handleUpdateEstadoCita = (id: number, estado: EstadoVisitaGuiada) => {
+  const cita = citas.value.find(c => c.id_cita === id)
+  if (cita) cita.estado_visita_guiada = estado
+}
 
-const store = {
-  leads,
-  citas,
-  clientes
-};
-
-const eliminarItem = (tipo: "leads" | "citas" | "clientes", id: number) => {
-  store[tipo].value = store[tipo].value.filter((item) => item.id !== id);
-};
-//---------------------------------------------------FINAL DE DATOS GENERADOS --------------------------------------------------------------------
-
-// ---------------Estados posibles Leads, citas, clientes----------------------------
-const estados = ["Seguimiento", "Cierre", "No responde"];
-const estadosCitas = ["realizado", "reprogramo", "cancelo"];
-const VendidoClientes = ["seleccionar", "No", "Si"];
-
-
-
+const handleUpdateVendido = (id: number, vendido: boolean) => {
+  // TODO: implementar lógica de vendido
+  console.log('Update vendido:', id, vendido)
+}
 </script>
 <!-------------------------------------------------------------PARTE VISUAL EN PANTALLA ---------------------------------------------------------------->
 <template>
   <div class="p-8">
-    <!-- Encabezado (Leads, Citas,  Clientes)-->
+    <!-- Encabezado (Tabs + Botón agregar) -->
     <div class="flex justify-between items-center mb-6">
       <div class="flex space-x-2">
-        <!-- TAB: Leads -->
         <button
-          @click="setTab('Leads')"
+          v-for="tab in (['Leads', 'Citas', 'Clientes'] as const)"
+          :key="tab"
+          @click="setTab(tab)"
           class="px-4 py-2 rounded-full font-semibold transition-colors duration-150 shadow-md border border-gray-200"
           :class="{
-            'bg-negro-primario text-blanco-primario': currentTab === 'Leads',
-            'bg-blanco-primario text-negro-primario': currentTab !== 'Leads',
+            'bg-negro-primario text-blanco-primario': currentTab === tab,
+            'bg-blanco-primario text-negro-primario hover:bg-gray-50': currentTab !== tab,
           }"
         >
-          Leads
-        </button>
-
-        <!-- TAB: Citas -->
-        <button
-          @click="setTab('Citas')"
-          class="px-4 py-2 rounded-full font-semibold transition-colors duration-150 shadow-md border border-gray-200"
-          :class="{
-            'bg-negro-primario text-blanco-primario': currentTab === 'Citas',
-            'bg-blanco-primario text-negro-primario': currentTab !== 'Citas',
-          }"
-        >
-          Citas
-        </button>
-
-        <!-- TAB: Clientes -->
-        <button
-          @click="setTab('Clientes')"
-          class="px-4 py-2 rounded-full font-semibold transition-colors duration-150 shadow-md border border-gray-200"
-          :class="{
-            'bg-negro-primario text-blanco-primario': currentTab === 'Clientes',
-            'bg-blanco-primario text-negro-primario': currentTab !== 'Clientes',
-          }"
-        >
-          Clientes
+          {{ tab }}
         </button>
       </div>
 
-      <!-- ------------------------Botón agregar Lead------------------------------- -->
       <button
         @click="showNuevoLeadForm = true"
-        class="px-4 py-2 rounded-full font-semibold shadow-md bg-blanco-primario text-negro-primario border border-gray-200"
+        class="px-4 py-2 rounded-full font-semibold shadow-md bg-blanco-primario text-negro-primario border border-gray-200 hover:bg-gray-50 transition-colors"
       >
         + Agregar Lead
       </button>
     </div>
 
-<!------------------------------------------------------TABLA DE LEADS----------------------------------------------------------------------->
-    <div v-if="currentTab === 'Leads'">
-      <TablaLeads :leads="leads" :estados="estados" @guardar="pasarLeadACitas" @eliminar="(id) => eliminarItem('leads', id)" />
-    </div>
-<!------------------------------------------------------TABLA DE CITAS----------------------------------------------------------------------->
-    <div v-else-if="currentTab === 'Citas'">
-      <TablaCitas :citas="citas" :estadosCitas="estadosCitas" @guardar="pasarCitaAClientes" @eliminar="(id) => eliminarItem('citas', id)" />
-    </div>
-<!------------------------------------------------------TABLA DE CLIENTES----------------------------------------------------------------------->
-    <div v-else-if="currentTab === 'Clientes'">
-      <TablaClientes :clientes="clientes" :VendidoClientes="VendidoClientes" @eliminar="(id) => eliminarItem('clientes', id)" />
-    </div>
+    <!-- Tabla de Leads -->
+    <CaptacionTablesTablaLeads
+      v-if="currentTab === 'Leads'"
+      :leads="leads"
+      @guardar="handleGuardarLead"
+      @eliminar="handleEliminarLead"
+      @update-estado="handleUpdateEstadoLead"
+    />
 
-    <!-- Modal Agregar Nuevo Lead -->
-    <NuevoLeadForm v-if="showNuevoLeadForm" @close="showNuevoLeadForm = false" @crear="nuevoLeadForm" />
+    <!-- Tabla de Citas -->
+    <CaptacionTablesTablaCitas
+      v-if="currentTab === 'Citas'"
+      :citas="citas"
+      @guardar="handleGuardarCita"
+      @eliminar="handleEliminarCita"
+      @update-estado="handleUpdateEstadoCita"
+    />
+
+    <!-- Tabla de Clientes -->
+    <CaptacionTablesTablaClientes
+      v-if="currentTab === 'Clientes'"
+      :clientes="clientes"
+      @eliminar="handleEliminarCliente"
+      @update-vendido="handleUpdateVendido"
+    />
+
+    <!-- Modal Nuevo Lead -->
+    <CaptacionFormsNuevoLeadForm
+      v-if="showNuevoLeadForm"
+      @close="showNuevoLeadForm = false"
+      @crear="handleCrearLead"
+    />
   </div>
 </template>

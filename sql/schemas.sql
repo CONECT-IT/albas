@@ -131,3 +131,15 @@ CREATE TABLE conversiones (
     FOREIGN KEY (id_persona) REFERENCES personas(id_persona) ON DELETE CASCADE,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
 );
+
+CREATE TABLE propiedad_vendedor (
+    id_propiedad INTEGER NOT NULL,
+    id_persona INTEGER NOT NULL,
+    id_usuario INTEGER NOT NULL,
+    observacion TEXT,
+    fecha_asignacion DATE DEFAULT CURRENT_DATE,
+    PRIMARY KEY (id_propiedad, id_persona),
+    FOREIGN KEY (id_propiedad) REFERENCES propiedad(id_propiedad) ON DELETE CASCADE,
+    FOREIGN KEY (id_persona) REFERENCES personas(id_persona) ON DELETE CASCADE,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);

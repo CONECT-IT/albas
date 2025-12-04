@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import NuevoLeadForm from '~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue';
+
 definePageMeta({
   layout: 'asesor', 
 });
@@ -179,7 +179,7 @@ const guardarLead = (leadData: any) => {
         </div>
     </div>
      <!-- Modal para crear lead-->
-    <NuevoLeadForm 
+    <CaptacionFormsNuevoLeadForm 
       v-if="showModal"
       @close="showModal = false"
       @crear="guardarLead"
