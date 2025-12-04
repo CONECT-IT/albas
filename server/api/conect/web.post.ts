@@ -25,14 +25,12 @@ export default defineEventHandler(async (event) => {
 
     const personaRepetida = await captacionService.leadRepetido(waPhoneNumber);
     const esRepetido = personaRepetida.esRepetido;
-
     if (esRepetido) {
       const { persona } = personaRepetida;
       const id_persona = persona.id_persona;
 
       const leadRepetido = await captacionService.leadActivo(id_persona);
       const esActivo = leadRepetido.esActivo;
-
       if (esActivo) {
         setResponseStatus(event, 409);
         message = {
@@ -40,7 +38,6 @@ export default defineEventHandler(async (event) => {
         };
       } else {
         const asesorAnterior = leadRepetido.lead?.[0].id_usuario;
-
         const tipoLead: "Lead Alvas" | "Lead Propio" = "Lead Alvas";
         const nuevoLead = {
           nombre: persona.nombre,
@@ -108,6 +105,7 @@ export default defineEventHandler(async (event) => {
       }
     }
   } catch (error) {
+    setResponseStatus(event, 500);
     message = { message: "Error durante las comprobaciones de asignación", error };
   }
 
