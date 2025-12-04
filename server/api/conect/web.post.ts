@@ -66,14 +66,12 @@ export default defineEventHandler(async (event) => {
     } else {
       /* Asignar al asesor con menor carga */
       const asesores = await asesorService.cargaAsesores();
-
       const asesorMenorCarga = asesores.reduce((prev: any, curr: any) => {
         return prev.total_clientes < curr.total_clientes ? prev : curr;
       });
       const asesoresConMenorCarga = asesores.filter(
         (a: any) => a.total_clientes === asesorMenorCarga.total_clientes,
       );
-
       /* Ante empate de asesores, escoger al asesor con mejor rendimiento (conversion de clientes) */
       if (asesoresConMenorCarga.length > 1) {
         const rendimientoPromises = asesoresConMenorCarga.map(async (asesor) => {

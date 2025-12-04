@@ -30,6 +30,7 @@ export const gestionVendedorRepository = {
         GROUP BY uv.id_usuario
       ) as A
       RIGHT JOIN usuarios u ON u.id_usuario = A.id_usuario
+      WHERE NOT (u.id_rol = 1)
     `;
   },
 
