@@ -1,27 +1,27 @@
 <script setup lang="ts">
 interface Props {
-  modelValue: string | number
-  label?: string
-  placeholder?: string
-  type?: 'text' | 'number' | 'date' | 'time' | 'email' | 'tel'
-  required?: boolean
-  disabled?: boolean
+  modelValue: string | number;
+  label?: string;
+  placeholder?: string;
+  type?: "text" | "number" | "date" | "time" | "email" | "tel";
+  required?: boolean;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  type: 'text',
+  type: "text",
   required: false,
-  disabled: false
-})
+  disabled: false,
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-}>()
+  "update:modelValue": [value: string | number];
+}>();
 
 const handleInput = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  emit('update:modelValue', props.type === 'number' ? Number(target.value) : target.value)
-}
+  const target = event.target as HTMLInputElement;
+  emit("update:modelValue", props.type === "number" ? Number(target.value) : target.value);
+};
 </script>
 
 <template>

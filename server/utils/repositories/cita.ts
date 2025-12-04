@@ -32,6 +32,32 @@ export const citaRepository = {
     `;
   },
 
+  // Citas de CAPTACIÓN: personas que son vendedores (están en usuario_vendedor)
+  async findByAsesorCaptacion(usuarioId: number) {
+    const db = usePostgres();
+    return await db`
+      SELECT c.*, p.nombre as persona_nombre, p.celular, p.tipo as persona_tipo, uv.estado_vendedor, uv.observacion as lead_observacion
+      FROM citas c
+      INNER JOIN personas p ON c.id_persona = p.id_persona
+      INNER JOIN usuario_vendedor uv ON uv.id_persona = p.id_persona AND uv.id_usuario = c.id_usuario
+      WHERE c.id_usuario = ${usuarioId}
+      ORDER BY c.fecha_agendada DESC
+    `;
+  },
+
+  // Citas de VENTAS: personas que son compradores (están en usuario_comprador)
+  async findByAsesorVentas(usuarioId: number) {
+    const db = usePostgres();
+    return await db`
+      SELECT c.*, p.nombre as persona_nombre, p.celular, uc.estado_comprador, uc.observacion as lead_observacion
+      FROM citas c
+      INNER JOIN personas p ON c.id_persona = p.id_persona
+      INNER JOIN usuario_comprador uc ON uc.id_persona = p.id_persona AND uc.id_usuario = c.id_usuario
+      WHERE c.id_usuario = ${usuarioId}
+      ORDER BY c.fecha_agendada DESC
+    `;
+  },
+
   async findByPersona(personaId: number) {
     const db = usePostgres();
     return await db`
@@ -59,7 +85,10 @@ export const citaRepository = {
     return cita;
   },
 
-  async update(id: number, data: Partial<{ fecha_agendada: string; observacion: string; estado_visita_guiada: string }>) {
+  async update(
+    id: number,
+    data: Partial<{ fecha_agendada: string; observacion: string; estado_visita_guiada: string }>,
+  ) {
     const db = usePostgres();
     const [cita] = await db`
       UPDATE citas SET ${db(data)}

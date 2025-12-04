@@ -9,27 +9,27 @@ export default defineEventHandler(async (event) => {
     servicios_basicos,
     precio_negociable,
     partida_registral,
+    observacion,
   } = body;
 
-  if (!id_persona || !direccion || !precio_negociable) {
+  if (!id_persona || !direccion || precio_negociable === undefined) {
     throw createError({
       statusCode: 400,
       message: "id_persona, direccion y precio_negociable son requeridos",
     });
   }
 
-  const resultado = await contratoService.registrar({
-    id_usuario: user.id,
+  const propiedad = await propiedadVendedorService.crearPropiedadYAsignar({
     id_persona,
-    propiedad: {
-      direccion,
-      descripcion,
-      medidas,
-      servicios_basicos,
-      precio_negociable,
-      partida_registral,
-    },
+    id_usuario: user.id,
+    direccion,
+    descripcion,
+    medidas,
+    servicios_basicos,
+    precio_negociable,
+    partida_registral,
+    observacion,
   });
 
-  return { status: "success", message: "Contrato y propiedad registrados", data: resultado };
+  return { status: "success", message: "Propiedad creada y asignada", data: propiedad };
 });

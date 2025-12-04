@@ -51,7 +51,16 @@ export const asesorService = {
     });
   },
 
-  async actualizar(id: number, data: Partial<{ nombre_usuario: string; correo: string; nombres: string; apellidos: string; supervisor_id: number }>) {
+  async actualizar(
+    id: number,
+    data: Partial<{
+      nombre_usuario: string;
+      correo: string;
+      nombres: string;
+      apellidos: string;
+      supervisor_id: number;
+    }>,
+  ) {
     await this.obtener(id);
     return await usuarioRepository.update(id, data);
   },

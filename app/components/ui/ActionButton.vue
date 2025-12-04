@@ -1,16 +1,16 @@
 <script setup lang="ts">
 interface Props {
-  variant?: 'add' | 'edit' | 'view'
-  title?: string
+  variant?: "add" | "edit" | "view";
+  title?: string;
 }
 
 withDefaults(defineProps<Props>(), {
-  variant: 'view'
-})
+  variant: "view",
+});
 
 defineEmits<{
-  click: []
-}>()
+  click: [];
+}>();
 </script>
 
 <template>
@@ -21,8 +21,9 @@ defineEmits<{
       'rounded-full flex items-center justify-center w-6 h-6 shrink-0 transition-colors',
       {
         'bg-negro-primario text-blanco-primario hover:bg-gray-800': variant === 'add',
-        'bg-blanco-primario text-negro-primario hover:bg-gray-100': variant === 'edit' || variant === 'view'
-      }
+        'bg-blanco-primario text-negro-primario hover:bg-gray-100':
+          variant === 'edit' || variant === 'view',
+      },
     ]"
   >
     <!-- Add icon -->

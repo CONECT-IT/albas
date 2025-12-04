@@ -125,7 +125,10 @@ export const ventasService = {
 
   async eliminarGestion(usuarioId: number, personaId: number) {
     await this.verificarGestion(usuarioId, personaId);
-    return await gestionCompradorRepository.delete(usuarioId, personaId);
+    // Primero eliminar la relación
+    await gestionCompradorRepository.delete(usuarioId, personaId);
+    // Luego eliminar la persona
+    return await personaRepository.delete(personaId);
   },
 
   // === INTERESADOS ===

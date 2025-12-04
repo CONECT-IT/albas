@@ -52,15 +52,15 @@
             <div
               class="flex items-center justify-center w-10 h-10 rounded-full bg-negro-primario text-white font-semibold mr-3"
             >
-              {{ user?.name?.charAt(0) || "U" }}
+              {{ user?.nombre_completo?.charAt(0) || "U" }}
             </div>
             <div class="flex items-center space-x-4">
               <div class="text-sm">
                 <p class="font-medium text-gray-700">
-                  {{ user?.name }}
+                  {{ user?.nombre_completo }}
                 </p>
                 <p class="text-xs text-gray-500">
-                  {{ user?.username }}
+                  {{ user?.nombre_usuario }}
                 </p>
               </div>
               <button

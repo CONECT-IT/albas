@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 
 const props = defineProps<{
-  lead?: any;
   cita?: any;
+  mode?: "add" | "edit";
 }>();
 
 const emit = defineEmits<{
   close: [];
-  updated: [];
+  saved: [];
 }>();
 
 const loading = ref(false);
 const error = ref("");
-const comentario = ref("");
+const observacion = ref("");
 
 onMounted(() => {
-  comentario.value = props.lead?.observacion || props.cita?.observacion || "";
+  if (props.cita?.observacion) {
+    observacion.value = props.cita.observacion;
+  }
 });
 
 const handleSubmit = async () => {
@@ -24,14 +26,14 @@ const handleSubmit = async () => {
   error.value = "";
 
   try {
-    await $fetch("/api/asesor/captacion/leads", {
+    await $fetch("/api/asesor/citas", {
       method: "PUT",
       body: {
-        id_persona: props.lead?.id_persona,
-        observacion: comentario.value,
+        id_cita: props.cita?.id_cita,
+        observacion: observacion.value,
       },
     });
-    emit("updated");
+    emit("saved");
     emit("close");
   } catch (e: any) {
     error.value = e.data?.message || "Error al guardar";
@@ -42,17 +44,22 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <UiBaseModal :show="true" title="Editar Observación" size="md" @close="emit('close')">
+  <UiBaseModal
+    :show="true"
+    :title="mode === 'edit' ? 'Editar Observación' : 'Agregar Observación'"
+    size="md"
+    @close="emit('close')"
+  >
     <div class="space-y-4">
       <div v-if="error" class="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
         {{ error }}
       </div>
 
       <div>
-        <label class="block text-sm font-semibold text-gray-800 mb-1">Comentario</label>
+        <label class="block text-sm font-semibold text-gray-800 mb-1">Observación de la cita</label>
         <textarea
-          v-model="comentario"
-          placeholder="Escriba su observación..."
+          v-model="observacion"
+          placeholder="Escriba observaciones sobre esta visita..."
           class="w-full h-40 border border-gray-300 px-4 py-3 rounded-xl resize-none focus:outline-none focus:border-black"
         />
       </div>
@@ -63,7 +70,7 @@ const handleSubmit = async () => {
         Cancelar
       </UiBaseButton>
       <UiBaseButton @click="handleSubmit" :disabled="loading">
-        {{ loading ? "Guardando..." : "Guardar Cambios" }}
+        {{ loading ? "Guardando..." : "Guardar" }}
       </UiBaseButton>
     </template>
   </UiBaseModal>

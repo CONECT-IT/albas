@@ -1,5 +1,9 @@
 export default defineEventHandler(async (event) => {
   const user = event.context.user;
+  if (!user?.id) {
+    throw createError({ statusCode: 401, message: "No autenticado" });
+  }
+
   const body = await readBody(event);
   const { id_persona, nombre, celular, estado_vendedor, observacion } = body;
 
@@ -7,10 +11,11 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: "id_persona es requerido" });
   }
 
-  if (nombre || celular) {
+  if (nombre || celular || body.tipo) {
     const personaUpdate: Record<string, string> = {};
     if (nombre) personaUpdate.nombre = nombre;
     if (celular) personaUpdate.celular = celular;
+    if (body.tipo) personaUpdate.tipo = body.tipo;
     await captacionService.actualizarPersona(user.id, id_persona, personaUpdate);
   }
 

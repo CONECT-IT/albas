@@ -7,8 +7,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: "Nombre y tipo son requeridos" });
   }
 
-  if (tipo !== "Lead Alvas" && tipo !== "Lead Propio") {
-    throw createError({ statusCode: 400, message: "Tipo debe ser 'Lead Alvas' o 'Lead Propio'" });
+  const tiposValidos = ["Lead Alvas", "Lead Propio", "Referido"];
+  if (!tiposValidos.includes(tipo)) {
+    throw createError({
+      statusCode: 400,
+      message: "Tipo debe ser 'Lead Alvas', 'Lead Propio' o 'Referido'",
+    });
   }
 
   const lead = await captacionService.registrarLead({

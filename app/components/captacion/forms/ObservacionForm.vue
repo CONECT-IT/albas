@@ -1,54 +1,59 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import type { LeadVendedor, Propiedad } from '~~/shared/types'
+import { ref, onMounted } from "vue";
 
 const props = defineProps<{
-  lead?: LeadVendedor
-  cita?: any
-  propiedadesDisponibles?: Propiedad[]
-}>()
+  lead?: any;
+  cita?: any;
+}>();
 
 const emit = defineEmits<{
-  close: []
-  guardar: [data: { propiedad: string; comentario: string }]
-}>()
+  close: [];
+  saved: [];
+}>();
 
-const propiedadSeleccionada = ref('')
-const comentario = ref('')
+const loading = ref(false);
+const error = ref("");
+const comentario = ref("");
 
-const listaPropiedades = computed(() => 
-  props.propiedadesDisponibles?.map(p => p.direccion) || []
-)
+onMounted(() => {
+  // Cargar observación existente
+  if (props.lead?.observacion) {
+    comentario.value = props.lead.observacion;
+  }
+});
 
-const guardarObservacion = () => {
-  emit('guardar', {
-    propiedad: propiedadSeleccionada.value,
-    comentario: comentario.value
-  })
-  emit('close')
-}
+const guardarObservacion = async () => {
+  if (!comentario.value.trim()) {
+    error.value = "Escriba una observación";
+    return;
+  }
+
+  loading.value = true;
+  error.value = "";
+
+  try {
+    await $fetch("/api/asesor/captacion/leads", {
+      method: "PUT",
+      body: {
+        id_persona: props.lead?.id_persona,
+        observacion: comentario.value,
+      },
+    });
+    emit("saved");
+    emit("close");
+  } catch (e: any) {
+    error.value = e.data?.message || "Error al guardar";
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <template>
-  <UiBaseModal
-    :show="true"
-    title="Observaciones"
-    subtitle="Seleccione una propiedad y agregue su observación"
-    size="lg"
-    @close="emit('close')"
-  >
+  <UiBaseModal :show="true" title="Agregar Observación" size="md" @close="emit('close')">
     <div class="space-y-4">
-      <div>
-        <label class="block text-sm font-semibold text-gray-800 mb-1">Propiedad</label>
-        <select
-          v-model="propiedadSeleccionada"
-          class="w-full bg-gray-100 px-4 py-2 rounded-lg outline-none cursor-pointer"
-        >
-          <option disabled value="">Seleccione una propiedad</option>
-          <option v-for="(prop, index) in listaPropiedades" :key="index">
-            {{ prop }}
-          </option>
-        </select>
+      <div v-if="error" class="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+        {{ error }}
       </div>
 
       <div>
@@ -62,12 +67,11 @@ const guardarObservacion = () => {
     </div>
 
     <template #footer>
-      <UiBaseButton variant="secondary" @click="emit('close')">
+      <UiBaseButton variant="secondary" @click="emit('close')" :disabled="loading">
         Cancelar
       </UiBaseButton>
-      <UiBaseButton @click="guardarObservacion">
-        <UiIconSave size="sm" />
-        Guardar
+      <UiBaseButton @click="guardarObservacion" :disabled="loading">
+        {{ loading ? "Guardando..." : "Guardar" }}
       </UiBaseButton>
     </template>
   </UiBaseModal>

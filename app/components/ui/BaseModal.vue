@@ -1,18 +1,18 @@
 <script setup lang="ts">
 interface Props {
-  show: boolean
-  title?: string
-  subtitle?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  show: boolean;
+  title?: string;
+  subtitle?: string;
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 withDefaults(defineProps<Props>(), {
-  size: 'md'
-})
+  size: "md",
+});
 
 const emit = defineEmits<{
-  close: []
-}>()
+  close: [];
+}>();
 </script>
 
 <template>
@@ -20,10 +20,7 @@ const emit = defineEmits<{
     <Transition name="modal">
       <div v-if="show" class="fixed inset-0 z-50">
         <!-- Backdrop -->
-        <div
-          class="absolute inset-0 bg-black/40 backdrop-blur-sm"
-          @click="emit('close')"
-        />
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="emit('close')" />
 
         <!-- Modal container -->
         <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
@@ -34,8 +31,8 @@ const emit = defineEmits<{
                 'w-full max-w-sm': size === 'sm',
                 'w-full max-w-md': size === 'md',
                 'w-full max-w-lg': size === 'lg',
-                'w-full max-w-2xl': size === 'xl'
-              }
+                'w-full max-w-2xl': size === 'xl',
+              },
             ]"
             @click.stop
           >
@@ -66,7 +63,10 @@ const emit = defineEmits<{
             <slot />
 
             <!-- Footer -->
-            <div v-if="$slots.footer" class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
+            <div
+              v-if="$slots.footer"
+              class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100"
+            >
               <slot name="footer" />
             </div>
           </div>

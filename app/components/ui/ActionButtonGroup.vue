@@ -1,9 +1,9 @@
 <script setup lang="ts">
 defineEmits<{
-  add: []
-  edit: []
-  view: []
-}>()
+  add: [];
+  edit: [];
+  view: [];
+}>();
 </script>
 
 <template>

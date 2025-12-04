@@ -1,62 +1,80 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { CitaExpandida, EstadoVisitaGuiada } from '~~/shared/types'
-import { ESTADOS_VISITA, toSelectOptions } from '~/composables/useEstados'
-import { useModal } from '~/composables/useModal'
+import { ref } from "vue";
+import type { EstadoVisitaGuiada } from "~~/shared/types";
+import { ESTADOS_VISITA, toSelectOptions } from "~/composables/useEstados";
+import { useModal } from "~/composables/useModal";
+
+interface CitaAPI {
+  id_cita: number;
+  fecha_agendada: string;
+  observacion: string | null;
+  estado_visita_guiada: EstadoVisitaGuiada;
+  id_persona: number;
+  id_usuario: number;
+  persona_nombre: string;
+  persona_tipo: string;
+}
 
 const props = defineProps<{
-  citas: CitaExpandida[]
-}>()
+  citas: CitaAPI[];
+}>();
 
 const emit = defineEmits<{
-  guardar: [cita: CitaExpandida]
-  eliminar: [id: number]
-  updateEstado: [id: number, estado: EstadoVisitaGuiada]
-}>()
+  convertir: [cita: CitaAPI];
+  eliminar: [id: number];
+  updateEstado: [id: number, estado: EstadoVisitaGuiada];
+  refresh: [];
+}>();
 
-const { activeModal, selectedItem, openModal, closeModal, isOpen } = useModal<CitaExpandida>()
-const confirmDialog = ref<InstanceType<typeof UiConfirmDialog> | null>(null)
-const deleteDialog = ref<InstanceType<typeof UiConfirmDialog> | null>(null)
+const { activeModal, selectedItem, openModal, closeModal, isOpen } = useModal<CitaAPI>();
+const confirmDialog = ref<InstanceType<typeof UiConfirmDialog> | null>(null);
+const deleteDialog = ref<InstanceType<typeof UiConfirmDialog> | null>(null);
 
-const estadoOptions = toSelectOptions(ESTADOS_VISITA)
+const estadoOptions = toSelectOptions(ESTADOS_VISITA);
 
-const handleGuardar = async (cita: CitaExpandida) => {
-  const confirmed = await confirmDialog.value?.open()
+// Convertir lead a cliente
+const handleConvertir = async (cita: CitaAPI) => {
+  const confirmed = await confirmDialog.value?.open();
   if (confirmed) {
-    emit('guardar', cita)
+    emit("convertir", cita);
   }
-}
+};
 
 const handleEliminar = async (id: number) => {
-  const confirmed = await deleteDialog.value?.open()
+  const confirmed = await deleteDialog.value?.open();
   if (confirmed) {
-    emit('eliminar', id)
+    emit("eliminar", id);
   }
-}
+};
+
+const handleModalSuccess = () => {
+  closeModal();
+  emit("refresh");
+};
 
 const formatFecha = (fecha: string) => {
-  return new Date(fecha).toLocaleDateString('es-PE')
-}
+  return new Date(fecha).toLocaleDateString("es-PE");
+};
 
 const columns = [
-  { key: 'id', label: 'N°', class: 'w-12' },
-  { key: 'nombre', label: 'Nombre Completo', class: 'flex-1 min-w-[150px]' },
-  { key: 'celular', label: 'Celular', class: 'w-28' },
-  { key: 'fecha', label: 'Fecha', class: 'w-24' },
-  { key: 'tipo', label: 'Tipo', class: 'w-24' },
-  { key: 'visita', label: 'Visitas', class: 'w-24' },
-  { key: 'gastos', label: 'Gastos', class: 'w-24' },
-  { key: 'observacion', label: 'Observación', class: 'w-28' },
-  { key: 'estado', label: 'Estado', class: 'w-36' },
-  { key: 'acciones', label: 'Acciones', class: 'w-20' },
-  { key: 'guardar', label: 'Guardar', class: 'w-16' }
-]
+  { key: "id", label: "N°", class: "w-12" },
+  { key: "nombre", label: "Nombre Completo", class: "flex-1 min-w-[150px]" },
+  { key: "fecha", label: "Fecha Visita", class: "w-28" },
+  { key: "observacion", label: "Observación", class: "w-28" },
+  { key: "estado", label: "Estado", class: "w-36" },
+  { key: "acciones", label: "Acciones", class: "w-20" },
+];
+
+// Verificar si una cita ya es cliente
+const esCliente = (cita: CitaAPI) => cita.persona_tipo === "Cliente";
 </script>
 
 <template>
   <div class="bg-blanco-primario p-4 rounded-xl shadow-xl overflow-x-auto">
     <!-- Header -->
-    <div class="flex gap-2 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200 min-w-max">
+    <div
+      class="flex gap-2 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200 min-w-max"
+    >
       <span v-for="col in columns" :key="col.key" :class="col.class">
         {{ col.label }}
       </span>
@@ -70,41 +88,10 @@ const columns = [
         class="flex gap-2 py-3 px-4 text-sm text-gray-800 items-center min-w-max hover:bg-gray-50 transition-colors"
       >
         <span class="w-12">{{ index + 1 }}</span>
-        <span class="flex-1 min-w-[150px] font-medium">{{ cita.persona.nombre }}</span>
-        <span class="w-28">{{ cita.persona.celular || '-' }}</span>
-        <span class="w-24">{{ formatFecha(cita.fecha_agendada) }}</span>
-        <span class="w-24">
-          <span class="px-2 py-1 rounded-full text-xs font-medium"
-            :class="{
-              'bg-blue-100 text-blue-700': cita.persona.tipo === 'Lead Alvas',
-              'bg-green-100 text-green-700': cita.persona.tipo === 'Lead Propio',
-              'bg-purple-100 text-purple-700': cita.persona.tipo === 'Referido',
-              'bg-amber-100 text-amber-700': cita.persona.tipo === 'Cliente'
-            }"
-          >
-            {{ cita.persona.tipo }}
-          </span>
-        </span>
+        <span class="flex-1 min-w-[150px] font-medium">{{ cita.persona_nombre }}</span>
+        <span class="w-28">{{ formatFecha(cita.fecha_agendada) }}</span>
 
-        <!-- Visitas -->
-        <span class="w-24">
-          <UiActionButtonGroup
-            @add="openModal('addVisita', cita)"
-            @edit="openModal('editVisita', cita)"
-            @view="openModal('viewVisita', cita)"
-          />
-        </span>
-
-        <!-- Gastos -->
-        <span class="w-24">
-          <UiActionButtonGroup
-            @add="openModal('addGastos', cita)"
-            @edit="openModal('editGastos', cita)"
-            @view="openModal('viewGastos', cita)"
-          />
-        </span>
-
-        <!-- Observación -->
+        <!-- Observación de la cita -->
         <span class="w-28">
           <UiActionButtonGroup
             @add="openModal('addObservacion', cita)"
@@ -113,11 +100,17 @@ const columns = [
           />
         </span>
 
-        <!-- Estado -->
+        <!-- Estado de la visita -->
         <span class="w-36">
           <select
             :value="cita.estado_visita_guiada"
-            @change="emit('updateEstado', cita.id_cita, ($event.target as HTMLSelectElement).value as EstadoVisitaGuiada)"
+            @change="
+              emit(
+                'updateEstado',
+                cita.id_cita,
+                ($event.target as HTMLSelectElement).value as EstadoVisitaGuiada,
+              )
+            "
             class="w-full border rounded px-2 py-1 text-sm bg-white"
           >
             <option v-for="opt in estadoOptions" :key="opt.value" :value="opt.value">
@@ -126,12 +119,12 @@ const columns = [
           </select>
         </span>
 
-        <!-- Acciones -->
+        <!-- Acciones: Editar cita -->
         <span class="w-20 flex gap-2">
           <button
             @click="openModal('editCita', cita)"
             class="p-1 hover:bg-gray-100 rounded transition-colors"
-            title="Editar"
+            title="Editar cita"
           >
             <UiIconEdit />
           </button>
@@ -142,17 +135,22 @@ const columns = [
           >
             <UiIconTrash />
           </button>
-        </span>
-
-        <!-- Guardar -->
-        <span class="w-16 flex justify-center">
+          <!-- Convertir a cliente (solo si no es cliente) -->
           <button
-            @click="handleGuardar(cita)"
-            class="p-1 hover:bg-gray-100 rounded transition-colors"
-            title="Guardar"
+            v-if="!esCliente(cita)"
+            @click="handleConvertir(cita)"
+            class="px-2 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded text-xs font-medium transition-colors"
+            title="Convertir a cliente"
           >
-            <UiIconSave />
+            C
           </button>
+          <span
+            v-else
+            class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium"
+            title="Ya es cliente"
+          >
+            C
+          </span>
         </span>
       </div>
 
@@ -161,22 +159,46 @@ const columns = [
       </div>
     </div>
 
-    <!-- Modales -->
-    <CaptacionFormsVisitaForm v-if="isOpen('addVisita')" :cita="selectedItem" @close="closeModal" />
-    <CaptacionFormsEditarVisitaForm v-if="isOpen('editVisita')" :cita="selectedItem" @close="closeModal" />
-    <CaptacionFormsVerVisitaForm v-if="isOpen('viewVisita')" :cita="selectedItem" @close="closeModal" />
+    <!-- Modales de observación de cita -->
+    <CaptacionFormsCitaObservacionForm
+      v-if="isOpen('addObservacion')"
+      :cita="selectedItem"
+      @close="closeModal"
+      @saved="handleModalSuccess"
+    />
+    <CaptacionFormsCitaObservacionForm
+      v-if="isOpen('editObservacion')"
+      :cita="selectedItem"
+      mode="edit"
+      @close="closeModal"
+      @saved="handleModalSuccess"
+    />
+    <CaptacionFormsVerCitaObservacion
+      v-if="isOpen('viewObservacion')"
+      :cita="selectedItem"
+      @close="closeModal"
+    />
 
-    <CaptacionFormsGastosForm v-if="isOpen('addGastos')" :cita="selectedItem" @close="closeModal" />
-    <CaptacionFormsEditarGastosForm v-if="isOpen('editGastos')" :cita="selectedItem" @close="closeModal" />
-    <CaptacionFormsVerGastosForm v-if="isOpen('viewGastos')" :cita="selectedItem" @close="closeModal" />
+    <!-- Modal editar cita -->
+    <CaptacionFormsEditarCitaForm
+      v-if="isOpen('editCita')"
+      :cita="selectedItem"
+      @close="closeModal"
+      @updated="handleModalSuccess"
+    />
 
-    <CaptacionFormsObservacionForm v-if="isOpen('addObservacion')" :cita="selectedItem" @close="closeModal" />
-    <CaptacionFormsEditarObservacionForm v-if="isOpen('editObservacion')" :cita="selectedItem" @close="closeModal" />
-    <CaptacionFormsVerObservacionForm v-if="isOpen('viewObservacion')" :cita="selectedItem" @close="closeModal" />
-
-    <CaptacionFormsEditarLeadForm v-if="isOpen('editCita')" :cita="selectedItem" @close="closeModal" />
-
-    <UiConfirmDialog ref="confirmDialog" title="¿Guardar cambios?" message="¿Deseas guardar la información?" confirm-text="Sí, guardar" />
-    <UiConfirmDialog ref="deleteDialog" title="¿Eliminar cita?" message="Esta acción no se puede deshacer." confirm-text="Sí, eliminar" variant="danger" />
+    <UiConfirmDialog
+      ref="confirmDialog"
+      title="¿Convertir a cliente?"
+      message="Esta acción convertirá el lead en cliente y registrará la conversión."
+      confirm-text="Sí, convertir"
+    />
+    <UiConfirmDialog
+      ref="deleteDialog"
+      title="¿Eliminar cita?"
+      message="Esta acción no se puede deshacer."
+      confirm-text="Sí, eliminar"
+      variant="danger"
+    />
   </div>
 </template>

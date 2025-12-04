@@ -2,13 +2,15 @@ export const captacionService = {
   // === LEADS VENDEDORES ===
   async listarLeads(usuarioId: number) {
     const gestiones = await gestionVendedorRepository.findByAsesor(usuarioId);
-    return gestiones.filter((g: any) => g.tipo === "Lead Alvas" || g.tipo === "Lead Propio");
+    return gestiones.filter(
+      (g: any) => g.tipo === "Lead Alvas" || g.tipo === "Lead Propio" || g.tipo === "Referido",
+    );
   },
 
   async registrarLead(data: {
     nombre: string;
     celular?: string;
-    tipo: "Lead Alvas" | "Lead Propio";
+    tipo: "Lead Alvas" | "Lead Propio" | "Referido";
     id_usuario: number;
     observacion?: string;
   }) {
@@ -131,7 +133,7 @@ export const captacionService = {
   async actualizarPersona(
     usuarioId: number,
     personaId: number,
-    data: Partial<{ nombre: string; celular: string }>,
+    data: Partial<{ nombre: string; celular: string; tipo: string }>,
   ) {
     await this.verificarGestion(usuarioId, personaId);
     return await personaRepository.update(personaId, data);
@@ -152,6 +154,9 @@ export const captacionService = {
 
   async eliminarGestion(usuarioId: number, personaId: number) {
     await this.verificarGestion(usuarioId, personaId);
-    return await gestionVendedorRepository.delete(usuarioId, personaId);
+    // Primero eliminar la relación
+    await gestionVendedorRepository.delete(usuarioId, personaId);
+    // Luego eliminar la persona
+    return await personaRepository.delete(personaId);
   },
 };

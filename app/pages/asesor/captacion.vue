@@ -1,130 +1,206 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { 
-  LeadVendedor, 
-  CitaExpandida, 
-  ClienteConContrato,
-  TipoPersona,
-  EstadoVendedor,
-  EstadoVisitaGuiada
-} from '~~/shared/types'
+import type { TipoPersona, EstadoVendedor, EstadoVisitaGuiada } from "~~/shared/types";
 
 definePageMeta({
-  layout: 'asesor',
-})
+  layout: "asesor",
+});
 
 // Tab actual
-type TabType = 'Leads' | 'Citas' | 'Clientes'
-const currentTab = ref<TabType>('Leads')
-const setTab = (tab: TabType) => (currentTab.value = tab)
+type TabType = "Leads" | "Citas" | "Clientes";
+const currentTab = ref<TabType>("Leads");
+const setTab = (tab: TabType) => (currentTab.value = tab);
 
 // Modal nuevo lead
-const showNuevoLeadForm = ref(false)
+const showNuevoLeadForm = ref(false);
 
-// Datos reactivos tipados según el schema SQL
-const leads = ref<LeadVendedor[]>([
-  {
-    id_persona: 1,
-    nombre: 'Lead Ejemplo',
-    celular: '900000000',
-    tipo: 'Lead Propio',
-    fecha_captacion: '2025-01-01',
-    estado_vendedor: 'Seguimiento',
-    observacion: null,
-    id_usuario: 2
-  }
-])
+// ============================================================
+// FETCH DATA FROM API
+// ============================================================
 
-const citas = ref<CitaExpandida[]>([])
-const clientes = ref<ClienteConContrato[]>([])
+// Leads
+const {
+  data: leadsData,
+  refresh: refreshLeads,
+  pending: leadsPending,
+} = useLazyFetch("/api/asesor/captacion/leads", {
+  default: () => ({ data: [] }),
+});
+const leads = computed(() => leadsData.value?.data || []);
+
+// Citas de Captación (vendedores)
+const {
+  data: citasData,
+  refresh: refreshCitas,
+  pending: citasPending,
+} = useLazyFetch("/api/asesor/captacion/citas", {
+  default: () => ({ data: [] }),
+});
+const citas = computed(() => citasData.value?.data || []);
+
+// Clientes
+const {
+  data: clientesData,
+  refresh: refreshClientes,
+  pending: clientesPending,
+} = useLazyFetch("/api/asesor/captacion/clientes", {
+  default: () => ({ data: [] }),
+});
+const clientes = computed(() => clientesData.value?.data || []);
+
+// ============================================================
+// HANDLERS
+// ============================================================
 
 // Crear nuevo lead
-const handleCrearLead = (nuevoLead: { nombre: string; celular: string; fecha: string; tipo: TipoPersona }) => {
-  const newId = Math.max(...leads.value.map(l => l.id_persona), 0) + 1
-  leads.value.push({
-    id_persona: newId,
-    nombre: nuevoLead.nombre,
-    celular: nuevoLead.celular,
-    tipo: nuevoLead.tipo,
-    fecha_captacion: nuevoLead.fecha,
-    estado_vendedor: 'Seguimiento',
-    observacion: null,
-    id_usuario: 2 // TODO: obtener del usuario logueado
-  })
-}
-
-// Guardar lead (pasarlo a citas)
-const handleGuardarLead = (lead: LeadVendedor) => {
-  const newCita: CitaExpandida = {
-    id_cita: Date.now(),
-    fecha_agendada: new Date().toISOString(),
-    observacion: lead.observacion,
-    estado_visita_guiada: 'Realizó visita',
-    id_persona: lead.id_persona,
-    id_usuario: lead.id_usuario,
-    persona: {
-      id_persona: lead.id_persona,
-      nombre: lead.nombre,
-      celular: lead.celular,
-      tipo: lead.tipo,
-      fecha_captacion: lead.fecha_captacion
-    },
-    usuario: {
-      id_usuario: lead.id_usuario,
-      nombre_usuario: 'asesor',
-      contrasena: '',
-      correo: '',
-      nombres: null,
-      apellidos: null,
-      supervisor_id: null,
-      id_rol: 2
-    }
+const handleCrearLead = async (nuevoLead: {
+  nombre: string;
+  celular: string;
+  tipo: TipoPersona;
+}) => {
+  try {
+    await $fetch("/api/asesor/captacion/leads", {
+      method: "POST",
+      body: {
+        nombre: nuevoLead.nombre,
+        celular: nuevoLead.celular,
+        tipo: nuevoLead.tipo,
+      },
+    });
+    await refreshLeads();
+    showNuevoLeadForm.value = false;
+  } catch (error) {
+    console.error("Error al crear lead:", error);
   }
-  citas.value.push(newCita)
-  leads.value = leads.value.filter(l => l.id_persona !== lead.id_persona)
-}
+};
 
-// Guardar cita (pasarla a clientes)
-const handleGuardarCita = (cita: CitaExpandida) => {
-  const newCliente: ClienteConContrato = {
-    id_persona: cita.id_persona,
-    nombre: cita.persona.nombre,
-    celular: cita.persona.celular,
-    tipo: 'Cliente',
-    fecha_captacion: cita.persona.fecha_captacion
+// Actualizar lead (estado/observación)
+const handleGuardarLead = async (lead: any) => {
+  try {
+    await $fetch("/api/asesor/captacion/leads", {
+      method: "PUT",
+      body: {
+        id_persona: lead.id_persona,
+        estado_vendedor: lead.estado_vendedor,
+        observacion: lead.observacion,
+      },
+    });
+    await refreshLeads();
+  } catch (error) {
+    console.error("Error al guardar lead:", error);
   }
-  clientes.value.push(newCliente)
-  citas.value = citas.value.filter(c => c.id_cita !== cita.id_cita)
-}
+};
 
-// Eliminar items
-const handleEliminarLead = (id: number) => {
-  leads.value = leads.value.filter(l => l.id_persona !== id)
-}
+// Eliminar lead
+const handleEliminarLead = async (id: number) => {
+  try {
+    await $fetch("/api/asesor/captacion/leads", {
+      method: "DELETE",
+      body: { id_persona: id },
+    });
+    await refreshLeads();
+  } catch (error) {
+    console.error("Error al eliminar lead:", error);
+  }
+};
 
-const handleEliminarCita = (id: number) => {
-  citas.value = citas.value.filter(c => c.id_cita !== id)
-}
+// Actualizar estado de lead
+const handleUpdateEstadoLead = async (id: number, estado: EstadoVendedor) => {
+  try {
+    await $fetch("/api/asesor/captacion/leads", {
+      method: "PUT",
+      body: {
+        id_persona: id,
+        estado_vendedor: estado,
+      },
+    });
+    await refreshLeads();
+  } catch (error) {
+    console.error("Error al actualizar estado:", error);
+  }
+};
 
-const handleEliminarCliente = (id: number) => {
-  clientes.value = clientes.value.filter(c => c.id_persona !== id)
-}
+// Guardar cita (actualizar estado)
+const handleGuardarCita = async (cita: any) => {
+  try {
+    await $fetch("/api/asesor/citas", {
+      method: "PUT",
+      body: {
+        id_cita: cita.id_cita,
+        estado_visita_guiada: cita.estado_visita_guiada,
+        observacion: cita.observacion,
+      },
+    });
+    await refreshCitas();
+  } catch (error) {
+    console.error("Error al guardar cita:", error);
+  }
+};
 
-// Actualizar estados
-const handleUpdateEstadoLead = (id: number, estado: EstadoVendedor) => {
-  const lead = leads.value.find(l => l.id_persona === id)
-  if (lead) lead.estado_vendedor = estado
-}
+// Convertir lead a cliente
+const handleConvertirACliente = async (cita: any) => {
+  try {
+    // Registrar la conversión (esto cambia el tipo de persona a Cliente)
+    await $fetch("/api/asesor/conversiones", {
+      method: "POST",
+      body: {
+        id_persona: cita.id_persona,
+      },
+    });
+    await refreshCitas();
+    await refreshClientes();
+    await refreshLeads();
+  } catch (error: any) {
+    console.error("Error al convertir a cliente:", error);
+  }
+};
 
-const handleUpdateEstadoCita = (id: number, estado: EstadoVisitaGuiada) => {
-  const cita = citas.value.find(c => c.id_cita === id)
-  if (cita) cita.estado_visita_guiada = estado
-}
+// Eliminar cita
+const handleEliminarCita = async (id: number) => {
+  try {
+    await $fetch("/api/asesor/citas", {
+      method: "DELETE",
+      body: { id_cita: id },
+    });
+    await refreshCitas();
+  } catch (error) {
+    console.error("Error al eliminar cita:", error);
+  }
+};
 
-const handleUpdateVendido = (id: number, vendido: boolean) => {
-  // TODO: implementar lógica de vendido
-  console.log('Update vendido:', id, vendido)
-}
+// Actualizar estado de cita
+const handleUpdateEstadoCita = async (id: number, estado: EstadoVisitaGuiada) => {
+  try {
+    await $fetch("/api/asesor/citas", {
+      method: "PUT",
+      body: {
+        id_cita: id,
+        estado_visita_guiada: estado,
+      },
+    });
+    await refreshCitas();
+  } catch (error) {
+    console.error("Error al actualizar estado:", error);
+  }
+};
+
+// Eliminar cliente (de la gestión)
+const handleEliminarCliente = async (id: number) => {
+  try {
+    await $fetch("/api/asesor/captacion/clientes", {
+      method: "DELETE",
+      body: { id_persona: id },
+    });
+    await refreshClientes();
+  } catch (error) {
+    console.error("Error al eliminar cliente:", error);
+  }
+};
+
+// Actualizar vendido
+const handleUpdateVendido = async (id: number, vendido: boolean) => {
+  // TODO: implementar endpoint para marcar como vendido
+  console.log("Update vendido:", id, vendido);
+};
 </script>
 <!-------------------------------------------------------------PARTE VISUAL EN PANTALLA ---------------------------------------------------------------->
 <template>
@@ -133,7 +209,7 @@ const handleUpdateVendido = (id: number, vendido: boolean) => {
     <div class="flex justify-between items-center mb-6">
       <div class="flex space-x-2">
         <button
-          v-for="tab in (['Leads', 'Citas', 'Clientes'] as const)"
+          v-for="tab in ['Leads', 'Citas', 'Clientes'] as const"
           :key="tab"
           @click="setTab(tab)"
           class="px-4 py-2 rounded-full font-semibold transition-colors duration-150 shadow-md border border-gray-200"
@@ -154,27 +230,43 @@ const handleUpdateVendido = (id: number, vendido: boolean) => {
       </button>
     </div>
 
+    <!-- Loading states -->
+    <div v-if="leadsPending && currentTab === 'Leads'" class="text-center py-8 text-gray-500">
+      Cargando leads...
+    </div>
+    <div v-if="citasPending && currentTab === 'Citas'" class="text-center py-8 text-gray-500">
+      Cargando citas...
+    </div>
+    <div v-if="clientesPending && currentTab === 'Clientes'" class="text-center py-8 text-gray-500">
+      Cargando clientes...
+    </div>
+
     <!-- Tabla de Leads -->
     <CaptacionTablesTablaLeads
-      v-if="currentTab === 'Leads'"
+      v-if="currentTab === 'Leads' && !leadsPending"
       :leads="leads"
       @guardar="handleGuardarLead"
       @eliminar="handleEliminarLead"
       @update-estado="handleUpdateEstadoLead"
+      @refresh="
+        refreshLeads();
+        refreshCitas();
+      "
     />
 
     <!-- Tabla de Citas -->
     <CaptacionTablesTablaCitas
-      v-if="currentTab === 'Citas'"
+      v-if="currentTab === 'Citas' && !citasPending"
       :citas="citas"
-      @guardar="handleGuardarCita"
+      @convertir="handleConvertirACliente"
       @eliminar="handleEliminarCita"
       @update-estado="handleUpdateEstadoCita"
+      @refresh="refreshCitas"
     />
 
     <!-- Tabla de Clientes -->
     <CaptacionTablesTablaClientes
-      v-if="currentTab === 'Clientes'"
+      v-if="currentTab === 'Clientes' && !clientesPending"
       :clientes="clientes"
       @eliminar="handleEliminarCliente"
       @update-vendido="handleUpdateVendido"

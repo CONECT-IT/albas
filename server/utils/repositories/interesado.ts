@@ -40,7 +40,11 @@ export const interesadoRepository = {
     return interesado ?? null;
   },
 
-  async update(idPropiedad: number, idPersona: number, data: Partial<{ vendido: boolean; separado: boolean }>) {
+  async update(
+    idPropiedad: number,
+    idPersona: number,
+    data: Partial<{ vendido: boolean; separado: boolean }>,
+  ) {
     const db = usePostgres();
     const [interesado] = await db`
       UPDATE interesado SET ${db(data)}

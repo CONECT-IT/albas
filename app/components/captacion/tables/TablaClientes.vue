@@ -1,61 +1,79 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { ClienteConContrato } from '~~/shared/types'
-import { useModal } from '~/composables/useModal'
+import { ref, computed } from "vue";
+import { useModal } from "~/composables/useModal";
+
+// Tipo para la respuesta de la API de clientes
+interface ClienteAPI {
+  id_persona: number;
+  id_usuario: number;
+  estado_vendedor: string;
+  observacion: string | null;
+  nombre: string;
+  celular: string | null;
+  tipo: string;
+  fecha_captacion: string;
+  id_contrato: number | null;
+  fecha_emision: string | null;
+  id_propiedad: number | null;
+  direccion: string | null;
+  descripcion: string | null;
+  medidas: string | null;
+  servicios_basicos: string | null;
+  precio_negociable: number | null;
+  partida_registral: string | null;
+}
 
 const props = defineProps<{
-  clientes: ClienteConContrato[]
-}>()
+  clientes: ClienteAPI[];
+}>();
 
 const emit = defineEmits<{
-  eliminar: [id: number]
-  updateVendido: [id: number, vendido: boolean]
-}>()
+  eliminar: [id: number];
+  updateVendido: [id: number, vendido: boolean];
+}>();
 
-const { activeModal, selectedItem, openModal, closeModal, isOpen } = useModal<ClienteConContrato>()
-const deleteDialog = ref<InstanceType<typeof UiConfirmDialog> | null>(null)
+const { activeModal, selectedItem, openModal, closeModal, isOpen } = useModal<ClienteAPI>();
+const deleteDialog = ref<InstanceType<typeof UiConfirmDialog> | null>(null);
 
-const searchQuery = ref('')
+const searchQuery = ref("");
 
 const filteredClientes = computed(() => {
-  if (!searchQuery.value) return props.clientes
-  const query = searchQuery.value.toLowerCase()
-  return props.clientes.filter(c => 
-    c.nombre.toLowerCase().includes(query) ||
-    c.celular?.toLowerCase().includes(query)
-  )
-})
+  if (!searchQuery.value) return props.clientes;
+  const query = searchQuery.value.toLowerCase();
+  return props.clientes.filter(
+    (c) => c.nombre.toLowerCase().includes(query) || c.celular?.toLowerCase().includes(query),
+  );
+});
 
 const handleEliminar = async (id: number) => {
-  const confirmed = await deleteDialog.value?.open()
+  const confirmed = await deleteDialog.value?.open();
   if (confirmed) {
-    emit('eliminar', id)
+    emit("eliminar", id);
   }
-}
+};
 
 const formatFecha = (fecha: string) => {
-  return new Date(fecha).toLocaleDateString('es-PE')
-}
+  return new Date(fecha).toLocaleDateString("es-PE");
+};
 
 const columns = [
-  { key: 'id', label: 'N°', class: 'w-12' },
-  { key: 'nombre', label: 'Nombre Completo', class: 'flex-1 min-w-[150px]' },
-  { key: 'celular', label: 'Contacto', class: 'w-28' },
-  { key: 'fecha', label: 'Fecha', class: 'w-24' },
-  { key: 'tipo', label: 'Tipo', class: 'w-24' },
-  { key: 'historial', label: 'Historial', class: 'w-20' },
-  { key: 'propiedades', label: 'Propiedades', class: 'w-24' },
-  { key: 'contrato', label: 'Contrato', class: 'w-20' },
-  { key: 'vendido', label: 'Vendido', class: 'w-28' },
-  { key: 'observacion', label: 'Observaciones', class: 'w-28' },
-  { key: 'acciones', label: 'Acciones', class: 'w-20' }
-]
+  { key: "id", label: "N°", class: "w-12" },
+  { key: "nombre", label: "Nombre Completo", class: "flex-1 min-w-[150px]" },
+  { key: "celular", label: "Contacto", class: "w-28" },
+  { key: "fecha", label: "Fecha", class: "w-24" },
+  { key: "historial", label: "Historial", class: "w-20" },
+  { key: "propiedades", label: "Propiedades", class: "w-24" },
+  { key: "contrato", label: "Contrato", class: "w-20" },
+  { key: "vendido", label: "Vendido", class: "w-28" },
+  { key: "observacion", label: "Observaciones", class: "w-28" },
+  { key: "acciones", label: "Acciones", class: "w-20" },
+];
 
 const vendidoOptions = [
-  { value: '', label: 'Seleccionar' },
-  { value: 'false', label: 'No' },
-  { value: 'true', label: 'Sí' }
-]
+  { value: "", label: "Seleccionar" },
+  { value: "false", label: "No" },
+  { value: "true", label: "Sí" },
+];
 </script>
 
 <template>
@@ -86,7 +104,9 @@ const vendidoOptions = [
     </div>
 
     <!-- Header -->
-    <div class="flex gap-2 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200 min-w-max">
+    <div
+      class="flex gap-2 py-3 px-4 text-sm font-semibold text-gray-600 border-b border-gray-200 min-w-max"
+    >
       <span v-for="col in columns" :key="col.key" :class="col.class">
         {{ col.label }}
       </span>
@@ -101,13 +121,8 @@ const vendidoOptions = [
       >
         <span class="w-12">{{ index + 1 }}</span>
         <span class="flex-1 min-w-[150px] font-medium">{{ cliente.nombre }}</span>
-        <span class="w-28">{{ cliente.celular || '-' }}</span>
+        <span class="w-28">{{ cliente.celular || "-" }}</span>
         <span class="w-24">{{ formatFecha(cliente.fecha_captacion) }}</span>
-        <span class="w-24">
-          <span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-            {{ cliente.tipo }}
-          </span>
-        </span>
 
         <!-- Historial -->
         <span class="w-20 flex justify-center">
@@ -127,8 +142,19 @@ const vendidoOptions = [
             class="p-1 hover:bg-gray-100 rounded transition-colors"
             title="Ver Propiedades"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+              />
             </svg>
           </button>
         </span>
@@ -140,8 +166,19 @@ const vendidoOptions = [
             class="p-1 hover:bg-gray-100 rounded transition-colors"
             title="Subir Contrato"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+              />
             </svg>
           </button>
         </span>
@@ -149,8 +186,14 @@ const vendidoOptions = [
         <!-- Vendido -->
         <span class="w-28">
           <select
-            :value="cliente.contrato ? 'true' : ''"
-            @change="emit('updateVendido', cliente.id_persona, ($event.target as HTMLSelectElement).value === 'true')"
+            :value="cliente.id_contrato ? 'true' : ''"
+            @change="
+              emit(
+                'updateVendido',
+                cliente.id_persona,
+                ($event.target as HTMLSelectElement).value === 'true',
+              )
+            "
             class="w-full border rounded px-2 py-1 text-sm bg-white"
           >
             <option v-for="opt in vendidoOptions" :key="opt.value" :value="opt.value">
@@ -190,17 +233,43 @@ const vendidoOptions = [
       </div>
 
       <div v-if="filteredClientes.length === 0" class="py-8 text-center text-gray-500">
-        {{ searchQuery ? 'No se encontraron resultados' : 'No hay clientes registrados' }}
+        {{ searchQuery ? "No se encontraron resultados" : "No hay clientes registrados" }}
       </div>
     </div>
 
     <!-- Modales -->
-    <CaptacionFormsVerHistorialForm v-if="isOpen('viewHistorial')" :cliente="selectedItem" @close="closeModal" />
-    <CaptacionFormsVerPropiedadForm v-if="isOpen('viewPropiedad')" :cliente="selectedItem" @close="closeModal" />
-    <CaptacionFormsSubirContratoForm v-if="isOpen('subirContrato')" :cliente="selectedItem" @close="closeModal" />
-    <CaptacionFormsVerObservacionForm v-if="isOpen('viewObservacion')" :cliente="selectedItem" @close="closeModal" />
-    <CaptacionFormsEditarLeadForm v-if="isOpen('editCliente')" :cliente="selectedItem" @close="closeModal" />
+    <CaptacionFormsVerHistorialForm
+      v-if="isOpen('viewHistorial')"
+      :cliente="selectedItem"
+      @close="closeModal"
+    />
+    <CaptacionFormsVerPropiedadForm
+      v-if="isOpen('viewPropiedad')"
+      :cliente="selectedItem"
+      @close="closeModal"
+    />
+    <CaptacionFormsSubirContratoForm
+      v-if="isOpen('subirContrato')"
+      :cliente="selectedItem"
+      @close="closeModal"
+    />
+    <CaptacionFormsVerObservacionForm
+      v-if="isOpen('viewObservacion')"
+      :cliente="selectedItem"
+      @close="closeModal"
+    />
+    <CaptacionFormsEditarLeadForm
+      v-if="isOpen('editCliente')"
+      :cliente="selectedItem"
+      @close="closeModal"
+    />
 
-    <UiConfirmDialog ref="deleteDialog" title="¿Eliminar cliente?" message="Esta acción no se puede deshacer." confirm-text="Sí, eliminar" variant="danger" />
+    <UiConfirmDialog
+      ref="deleteDialog"
+      title="¿Eliminar cliente?"
+      message="Esta acción no se puede deshacer."
+      confirm-text="Sí, eliminar"
+      variant="danger"
+    />
   </div>
 </template>

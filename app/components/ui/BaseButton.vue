@@ -1,17 +1,17 @@
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
-  size?: 'sm' | 'md' | 'lg'
-  rounded?: boolean
-  disabled?: boolean
+  variant?: "primary" | "secondary" | "danger" | "ghost";
+  size?: "sm" | "md" | "lg";
+  rounded?: boolean;
+  disabled?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
-  variant: 'primary',
-  size: 'md',
+  variant: "primary",
+  size: "md",
   rounded: false,
-  disabled: false
-})
+  disabled: false,
+});
 </script>
 
 <template>
@@ -26,11 +26,12 @@ withDefaults(defineProps<Props>(), {
         'px-4 py-2 text-sm': size === 'md',
         'px-6 py-3 text-base': size === 'lg',
         'bg-negro-primario text-blanco-primario hover:bg-gray-800': variant === 'primary',
-        'bg-blanco-primario text-negro-primario border border-gray-200 hover:bg-gray-50': variant === 'secondary',
+        'bg-blanco-primario text-negro-primario border border-gray-200 hover:bg-gray-50':
+          variant === 'secondary',
         'bg-red-600 text-white hover:bg-red-700': variant === 'danger',
         'bg-transparent text-negro-primario hover:bg-gray-100': variant === 'ghost',
-        'opacity-50 cursor-not-allowed': disabled
-      }
+        'opacity-50 cursor-not-allowed': disabled,
+      },
     ]"
   >
     <slot />

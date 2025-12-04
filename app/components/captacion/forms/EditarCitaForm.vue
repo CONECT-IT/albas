@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 const props = defineProps<{
-  lead?: any;
+  cita?: any;
 }>();
 
 const emit = defineEmits<{
   close: [];
-  created: [];
+  updated: [];
 }>();
 
 const loading = ref(false);
@@ -17,6 +17,17 @@ const form = ref({
   fecha: "",
   hora: "",
   observacion: "",
+});
+
+onMounted(() => {
+  if (props.cita) {
+    const fecha = new Date(props.cita.fecha_agendada);
+    form.value = {
+      fecha: fecha.toISOString().split("T")[0],
+      hora: fecha.toTimeString().slice(0, 5),
+      observacion: props.cita.observacion || "",
+    };
+  }
 });
 
 const handleSubmit = async () => {
@@ -29,24 +40,23 @@ const handleSubmit = async () => {
   error.value = "";
 
   try {
-    // Combinar fecha y hora
     let fechaAgendada = form.value.fecha;
     if (form.value.hora) {
       fechaAgendada = `${form.value.fecha}T${form.value.hora}`;
     }
 
     await $fetch("/api/asesor/citas", {
-      method: "POST",
+      method: "PUT",
       body: {
-        id_persona: props.lead?.id_persona,
+        id_cita: props.cita?.id_cita,
         fecha_agendada: fechaAgendada,
         observacion: form.value.observacion || null,
       },
     });
-    emit("created");
+    emit("updated");
     emit("close");
   } catch (e: any) {
-    error.value = e.data?.message || "Error al programar visita";
+    error.value = e.data?.message || "Error al actualizar";
   } finally {
     loading.value = false;
   }
@@ -56,8 +66,8 @@ const handleSubmit = async () => {
 <template>
   <UiBaseModal
     :show="true"
-    title="Programar Visita"
-    subtitle="Agendar una visita guiada para este lead"
+    title="Editar Cita"
+    subtitle="Modificar fecha y observación de la visita"
     size="md"
     @close="emit('close')"
   >
@@ -85,7 +95,7 @@ const handleSubmit = async () => {
         Cancelar
       </UiBaseButton>
       <UiBaseButton @click="handleSubmit" :disabled="loading">
-        {{ loading ? "Programando..." : "Programar Visita" }}
+        {{ loading ? "Guardando..." : "Guardar Cambios" }}
       </UiBaseButton>
     </template>
   </UiBaseModal>

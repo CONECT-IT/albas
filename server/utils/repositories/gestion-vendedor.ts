@@ -40,18 +40,27 @@ export const gestionVendedorRepository = {
     return gestion ?? null;
   },
 
-  async create(data: { id_usuario: number; id_persona: number; estado_vendedor?: string; observacion?: string }) {
+  async create(data: {
+    id_usuario: number;
+    id_persona: number;
+    estado_vendedor?: string;
+    observacion?: string;
+  }) {
     const db = usePostgres();
     const [gestion] = await db`
       INSERT INTO usuario_vendedor (id_usuario, id_persona, estado_vendedor, observacion)
-      VALUES (${data.id_usuario}, ${data.id_persona}, ${data.estado_vendedor ?? 'Seguimiento'}, ${data.observacion ?? null})
+      VALUES (${data.id_usuario}, ${data.id_persona}, ${data.estado_vendedor ?? "Seguimiento"}, ${data.observacion ?? null})
       ON CONFLICT DO NOTHING
       RETURNING *
     `;
     return gestion ?? null;
   },
 
-  async update(usuarioId: number, personaId: number, data: Partial<{ estado_vendedor: string; observacion: string }>) {
+  async update(
+    usuarioId: number,
+    personaId: number,
+    data: Partial<{ estado_vendedor: string; observacion: string }>,
+  ) {
     const db = usePostgres();
     const [gestion] = await db`
       UPDATE usuario_vendedor SET ${db(data)}

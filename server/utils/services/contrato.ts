@@ -3,7 +3,7 @@ export const contratoService = {
     // Listar contratos de personas que gestiona el asesor
     const gestiones = await gestionVendedorRepository.findByAsesor(usuarioId);
     const personaIds = gestiones.map((g: any) => g.id_persona);
-    
+
     if (personaIds.length === 0) return [];
 
     const db = usePostgres();
@@ -46,7 +46,10 @@ export const contratoService = {
     // Verificar que sea Cliente
     const persona = await personaRepository.findById(data.id_persona);
     if (!persona || persona.tipo !== "Cliente") {
-      throw createError({ statusCode: 400, message: "La persona debe ser Cliente para registrar contrato" });
+      throw createError({
+        statusCode: 400,
+        message: "La persona debe ser Cliente para registrar contrato",
+      });
     }
 
     // Crear propiedad

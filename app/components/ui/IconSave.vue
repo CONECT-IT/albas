@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  size?: 'sm' | 'md' | 'lg'
-}>()
+  size?: "sm" | "md" | "lg";
+}>();
 </script>
 
 <template>
@@ -14,7 +14,7 @@ defineProps<{
     :class="{
       'w-4 h-4': size === 'sm',
       'w-5 h-5': size === 'md' || !size,
-      'w-6 h-6': size === 'lg'
+      'w-6 h-6': size === 'lg',
     }"
   >
     <path

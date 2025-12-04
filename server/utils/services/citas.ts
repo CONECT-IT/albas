@@ -7,6 +7,16 @@ export const citasService = {
     return await citaRepository.findByAsesor(usuarioId);
   },
 
+  // Citas de captación (vendedores)
+  async listarPorAsesorCaptacion(usuarioId: number) {
+    return await citaRepository.findByAsesorCaptacion(usuarioId);
+  },
+
+  // Citas de ventas (compradores)
+  async listarPorAsesorVentas(usuarioId: number) {
+    return await citaRepository.findByAsesorVentas(usuarioId);
+  },
+
   async obtener(id: number) {
     const cita = await citaRepository.findById(id);
     if (!cita) {
@@ -46,6 +56,11 @@ export const citasService = {
 
   async cancelar(id: number, observacion?: string) {
     return await this.actualizarEstado(id, "Canceló", observacion);
+  },
+
+  async actualizarObservacion(id: number, observacion: string) {
+    await this.obtener(id);
+    return await citaRepository.update(id, { observacion });
   },
 
   async eliminar(id: number) {

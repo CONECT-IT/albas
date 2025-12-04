@@ -1,32 +1,32 @@
 <script setup lang="ts">
 interface Option {
-  value: string | number
-  label: string
+  value: string | number;
+  label: string;
 }
 
 interface Props {
-  modelValue: string | number
-  options: Option[]
-  label?: string
-  placeholder?: string
-  required?: boolean
-  disabled?: boolean
+  modelValue: string | number;
+  options: Option[];
+  label?: string;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
-  placeholder: 'Seleccione...',
+  placeholder: "Seleccione...",
   required: false,
-  disabled: false
-})
+  disabled: false,
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-}>()
+  "update:modelValue": [value: string | number];
+}>();
 
 const handleChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement
-  emit('update:modelValue', target.value)
-}
+  const target = event.target as HTMLSelectElement;
+  emit("update:modelValue", target.value);
+};
 </script>
 
 <template>
