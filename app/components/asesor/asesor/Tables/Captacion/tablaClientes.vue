@@ -144,7 +144,7 @@ const closeForm = (formType: string) => {
         <span class="flex items-center space-x-1 -ml-18">
           <!--VER INFORMACION PROPIEDAD-->
             <button
-               @click="openForm(cliente, 'verTerrenos')"
+               @click="openForm(cliente, 'verPropiedad')"
               class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 ml-3"
             >
               <svg
@@ -198,7 +198,7 @@ const closeForm = (formType: string) => {
         <span class="flex items-center space-x-1 -ml-18">
             <!--Ver Observacion-->
             <button
-              @click="openForm(cliente, 'verComentarios')"
+              @click="openForm(cliente, 'verObservacion')"
               class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 ml-13"
             >
               <svg
@@ -225,9 +225,9 @@ const closeForm = (formType: string) => {
 
         <!---------BOTON ACCIONES--------->
         <span class="flex space-x-2">
-            <!--Editar Visita-->
+            <!--Editar lead-->
             <button
-              @click="openForm(cliente, 'editarLeadCliente')"
+              @click="openForm(cliente, 'editarLead')"
               class="bg-blanco-primario rounded-full flex items-center justify-center w-6 h-6 text-negro-primario shrink-0 -ml-1"
             >
               <svg
@@ -278,8 +278,8 @@ const closeForm = (formType: string) => {
       @close="closeForm('verHistorial')"
     />
 <!-- MODAL PROPIEDADES -->
-    <VerTerrenosForm
-      v-if="showVerTerrenosForm"
+    <VerPropiedadForm
+      v-if="showVerPropiedadForm"
       :cita="selectedCliente"
       @close="closeForm('verPropiedad')"
     />
@@ -291,14 +291,14 @@ const closeForm = (formType: string) => {
     />
 
 <!--MODAL OBSERVACIONES-->
-    <VerComentariosForm
-       v-if="showVerComentariosForm"
+    <VerObservacionForm
+       v-if="showVerObservacionForm"
         :cita="selectedCliente"
-      @close="closeForm('verComentarios')"
+      @close="closeForm('verObservacion')"
     />
 <!--MODAL ACCIONES -->
-    <EditarLeadClienteForm
-      v-if="showEditarLeadClienteForm"
+    <EditarLeadForm
+      v-if="showEditarLeadForm"
       :cita="selectedCliente"
       @close="closeForm('editarLead')"
     />

@@ -404,10 +404,10 @@ const closeForm = (formType: string) => {
 
 <!--------------------------------------------------------------MODAl-------------------------------------------------------------->
 <!-- MODALES - VISITAS -->
-    <VisitasForm
-       v-if="showVisitasForm"
+    <VisitaForm
+       v-if="showVisitaForm"
         :cita="selectedCita"
-      @close="closeForm('visitas')"
+      @close="closeForm('visita')"
     />
 
     <EditarVisitaForm
