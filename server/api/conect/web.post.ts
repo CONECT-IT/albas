@@ -37,6 +37,16 @@ export default defineEventHandler(async (event) => {
           message: "No se asignó, el lead ya existe y está en atencion activa.",
         };
       } else {
+        if (leadRepetido.lead?.length === 0) {
+            setResponseStatus(event, 200);
+            const asesorElegido = await elegirAsesorAutomaticamente();
+            await gestionVendedorRepository.create({
+              id_usuario: Number(asesorElegido),
+              id_persona: id_persona,
+              observacion: "Lead asignado automáticamente por el sistema",
+            });
+            return { message: "El lead existe pero no tiene gestiones previas, se creo una, completado." };
+        }
         const asesorAnterior = leadRepetido.lead?.[0].id_usuario;
         const tipoLead: "Lead Alvas" | "Lead Propio" = "Lead Alvas";
         const nuevoLead = {
@@ -124,3 +134,34 @@ function getWhatsappInfo(json: WhatsappMessage) {
 
   return { waName, waPhone };
 }
+
+async function elegirAsesorAutomaticamente() {
+    /* Asignar al asesor con menor carga */
+      const asesores = await asesorService.cargaAsesores();
+
+      const asesorMenorCarga = asesores.reduce((prev: any, curr: any) => {
+        return prev.total_clientes < curr.total_clientes ? prev : curr;
+      });
+      const asesoresConMenorCarga = asesores.filter(
+        (a: any) => a.total_clientes === asesorMenorCarga.total_clientes,
+      );
+
+      /* Ante empate de asesores, escoger al asesor con mejor rendimiento (conversion de clientes) */
+      if (asesoresConMenorCarga.length > 1) {
+        const rendimientoPromises = asesoresConMenorCarga.map(async (asesor) => {
+          const r = await asesorService.rendimientoAsesor(Number(asesor.id_usuario));
+          const rendimiento = typeof r === "number" ? r : 0;
+          return { id_usuario: Number(asesor.id_usuario), rendimiento };
+        });
+
+        const asesoresConRendimiento = await Promise.all(rendimientoPromises);
+        const asesorMejorRendimiento = asesoresConRendimiento.reduce((prev: any, curr: any) => {
+          return prev.rendimiento > curr.rendimiento ? prev : curr;
+        });
+        const asesorAsignado = asesorMejorRendimiento.id_usuario;
+        return asesorAsignado;
+      } else {
+        const asesorAsignado = asesoresConMenorCarga[0].id_usuario;
+        return asesorAsignado;
+      }
+};
