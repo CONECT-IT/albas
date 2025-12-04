@@ -1,0 +1,15 @@
+{
+  "cookies": [
+    {
+      "name": "nuxt-session",
+      "value": "Fe26.2**891407813f3dc45888019bede472f488d1ccba50b0d30f07a0b3e8bf6ae50d71*AW7DOL8Yuefi4ytQOOLk8w*e-XkLvGudmRDTsY7-2NVlLnZHJUGxGer7tY0qSqzih4fFEy38Y7vSZQtfQ6EotWNXWSEiOGePp4kS_mBJ2UMU1t5atLhhhw-Z5iL5K6iPR46fwBg_iCKo61Z_TQpwFruQBNQlZ4TvrO_H5rJnArPQGEmC93crrdEG7k4pS_3OKq_cz7nrhsSF99bYHXgqoEHuKmycFBuqyqpkU5c01rkmXUhP-0_4up8om93r7qog1bQQF2ubKcLXND86p1PYdya1p-ULTChppaJarvUZ7DARySvOfEYw5S2Byx3aWmODlg**db160c2da070d84cf314127109c2ac684a3fd2b737ca8351d3e3325672a2c96f*YkDWmQSbOjnuDIiMoZ5tXDtvB_Roq5BzvTrsD989GOY",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1764887521.432999,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

@@ -19,6 +19,20 @@ export const gestionVendedorRepository = {
     `;
   },
 
+  async getCargaVentas() {
+    const db = usePostgres();
+    return await db`
+      SELECT u.id_usuario, A.total_clientes
+      FROM (
+        SELECT uv.id_usuario, COUNT(uv.id_persona) AS total_clientes
+        FROM usuario_vendedor uv 
+        WHERE uv.estado_vendedor NOT IN ('Cierre', 'No responde')
+        GROUP BY uv.id_usuario
+      ) as A
+      RIGHT JOIN usuarios u ON u.id_usuario = A.id_usuario
+    `;
+  },
+
   async findByPersona(personaId: number) {
     const db = usePostgres();
     return await db`
@@ -26,6 +40,17 @@ export const gestionVendedorRepository = {
       FROM usuario_vendedor uv
       INNER JOIN usuarios u ON uv.id_usuario = u.id_usuario
       WHERE uv.id_persona = ${personaId}
+    `;
+  },
+
+  async findByPersonaActiva(personaId: number) {
+    const db = usePostgres();
+    return await db`
+      SELECT *
+      FROM usuario_vendedor
+      WHERE id_persona = ${personaId} AND estado_vendedor NOT IN ('Cierre', 'No responde')
+      ORDER BY id_usuario DESC
+      LIMIT 1
     `;
   },
 
