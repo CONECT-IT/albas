@@ -5,6 +5,7 @@ export const asesorService = {
       SELECT 
         u.id_usuario,
         u.nombre_usuario,
+        u.correo,
         u.nombres,
         u.apellidos,
         COUNT(DISTINCT CASE 
@@ -22,7 +23,7 @@ export const asesorService = {
       LEFT JOIN personas p ON p.id_persona = COALESCE(uc.id_persona, uv.id_persona)
       LEFT JOIN conversiones c ON c.id_usuario = u.id_usuario
       WHERE u.supervisor_id = ${adminId}
-      GROUP BY u.id_usuario, u.nombre_usuario, u.nombres, u.apellidos
+      GROUP BY u.id_usuario, u.nombre_usuario, u.correo, u.nombres, u.apellidos
       ORDER BY u.id_usuario
     `;
   },

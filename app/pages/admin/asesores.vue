@@ -55,10 +55,11 @@
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"> Apellidos </label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"> Apellidos * </label>
           <input
             v-model="nuevoAsesor.apellidos"
             type="text"
+            required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Apellidos"
           />
@@ -116,6 +117,16 @@
               >
                 Correo
               </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+              >
+                Total Leads
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+              >
+                Leads Convertidos
+              </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
@@ -134,6 +145,12 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-black">
                 {{ asesor.correo }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">
+                {{ asesor.total_leads || 0 }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">
+                {{ asesor.total_convertidos || 0 }}
               </td>
             </tr>
           </tbody>
@@ -191,7 +208,7 @@ const crearAsesor = async () => {
         contrasena: nuevoAsesor.value.contrasena,
         correo: nuevoAsesor.value.correo,
         nombres: nuevoAsesor.value.nombres,
-        apellidos: nuevoAsesor.value.apellidos || null,
+        apellidos: nuevoAsesor.value.apellidos,
       },
     });
 
