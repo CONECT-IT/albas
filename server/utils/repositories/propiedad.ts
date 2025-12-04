@@ -34,14 +34,17 @@ export const propiedadRepository = {
     return propiedad;
   },
 
-  async update(id: number, data: Partial<{
-    direccion: string;
-    descripcion: string;
-    medidas: string;
-    servicios_basicos: string;
-    precio_negociable: number;
-    partida_registral: string;
-  }>) {
+  async update(
+    id: number,
+    data: Partial<{
+      direccion: string;
+      descripcion: string;
+      medidas: string;
+      servicios_basicos: string;
+      precio_negociable: number;
+      partida_registral: string;
+    }>,
+  ) {
     const db = usePostgres();
     const [propiedad] = await db`
       UPDATE propiedad SET ${db(data)}

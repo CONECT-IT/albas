@@ -67,7 +67,16 @@ export const usuarioRepository = {
     return usuario;
   },
 
-  async update(id: number, data: Partial<{ nombre_usuario: string; correo: string; nombres: string; apellidos: string; supervisor_id: number }>) {
+  async update(
+    id: number,
+    data: Partial<{
+      nombre_usuario: string;
+      correo: string;
+      nombres: string;
+      apellidos: string;
+      supervisor_id: number;
+    }>,
+  ) {
     const db = usePostgres();
     const [usuario] = await db`
       UPDATE usuarios SET ${db(data)}

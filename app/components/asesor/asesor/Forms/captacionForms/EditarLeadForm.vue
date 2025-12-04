@@ -4,8 +4,8 @@ import { ref, watch } from "vue";
 const props = defineProps({
   lead: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const emit = defineEmits(["close", "guardar"]);
@@ -26,7 +26,7 @@ watch(
       tipo.value = l.tipo;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const guardarCambios = () => {
@@ -35,7 +35,7 @@ const guardarCambios = () => {
     nombre: nombre.value,
     celular: celular.value,
     fecha: fecha.value,
-    tipo: tipo.value
+    tipo: tipo.value,
   });
 
   emit("close");
@@ -44,10 +44,7 @@ const guardarCambios = () => {
 
 <template>
   <!-- Fondo desenfocado -->
-  <div
-    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-    @click="$emit('close')"
-  ></div>
+  <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" @click="$emit('close')"></div>
 
   <!-- Modal -->
   <div class="fixed inset-0 flex items-center justify-center z-50">
@@ -55,7 +52,6 @@ const guardarCambios = () => {
       class="bg-white rounded-3xl p-10 shadow-xl w-[480px] border border-gray-200 relative"
       @click.stop
     >
-
       <!--BOTON CERRAR-->
       <button
         class="absolute top-6 right-6 text-gray-400 hover:text-black transition-colors"
@@ -79,7 +75,6 @@ const guardarCambios = () => {
 
       <!-- Campos -->
       <div class="space-y-5">
-
         <!-- Nombre -->
         <div>
           <label class="block text-sm text-gray-500 mb-1">Nombre Completo</label>
@@ -119,17 +114,12 @@ const guardarCambios = () => {
             class="w-full bg-gray-200 rounded-xl p-3 outline-none"
           />
         </div>
-
       </div>
 
       <!-- Botones -->
       <div class="flex justify-between mt-10">
-
         <!-- Cancelar -->
-        <button
-          @click="$emit('close')"
-          class="px-6 py-2 rounded-xl border border-black"
-        >
+        <button @click="$emit('close')" class="px-6 py-2 rounded-xl border border-black">
           Cancelar
         </button>
 
@@ -157,9 +147,7 @@ const guardarCambios = () => {
           </svg>
           Guardar Cambios
         </button>
-
       </div>
-
     </div>
   </div>
 </template>

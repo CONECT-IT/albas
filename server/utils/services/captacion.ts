@@ -1,3 +1,5 @@
+import postgres, { RowList } from "postgres";
+
 export const captacionService = {
   // === LEADS VENDEDORES ===
   async listarLeads(usuarioId: number) {
@@ -30,6 +32,23 @@ export const captacionService = {
     });
 
     return persona;
+  },
+
+  async leadRepetido(celular: string) {
+    const persona = await personaRepository.findByNumber(celular);
+    return { persona: persona, esRepetido: persona ? true : false };
+  },
+
+  async leadActivo(id_lead: number) {
+    const lead = await gestionVendedorRepository.findByPersona(id_lead);
+    const safeLead = Array.from(lead || []);
+    const enSeguimiento = safeLead.filter(
+      (l) => !["Cierre", "No responde"].includes(l.estado_vendedor),
+    );
+    const enTerminados = safeLead.filter(
+      (l) => l.estado_vendedor && ["Cierre", "No responde"].includes(l.estado_vendedor),
+    );
+    return { lead: enTerminados, esActivo: enSeguimiento.length > 0 };
   },
 
   // === CLIENTES VENDEDORES ===

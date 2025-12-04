@@ -52,10 +52,7 @@ const subirContrato = async () => {
 
 <template>
   <!-- Fondo difuminado -->
-  <div
-    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-    @click="cerrar"
-  ></div>
+  <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" @click="cerrar"></div>
 
   <!-- Contenedor principal -->
   <div class="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none">
@@ -67,11 +64,15 @@ const subirContrato = async () => {
         class="absolute top-6 right-6 text-gray-500 hover:text-black transition p-1 rounded-full hover:bg-gray-100"
         @click="cerrar"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-             class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-6 h-6"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
@@ -81,7 +82,6 @@ const subirContrato = async () => {
 
       <!-- FORMULARIO -->
       <form @submit.prevent="subirContrato" class="space-y-6">
-
         <!-- Nombre del contrato -->
         <div>
           <label class="block text-xs text-gray-500 font-bold mb-2 pl-1">Nombre del contrato</label>
@@ -96,12 +96,14 @@ const subirContrato = async () => {
 
         <!-- Archivo -->
         <div>
-          <label class="block text-xs text-gray-500 font-bold mb-2 pl-1">Archivo (PDF, DOC, DOCX)</label>
+          <label class="block text-xs text-gray-500 font-bold mb-2 pl-1"
+            >Archivo (PDF, DOC, DOCX)</label
+          >
           <input
             type="file"
             accept=".pdf,.doc,.docx"
             required
-            @change="e => archivo = e.target.files[0]"
+            @change="(e) => (archivo = e.target.files[0])"
             class="w-full bg-gray-200 rounded-xl py-3 px-4 text-sm font-bold text-gray-800 shadow-inner"
           />
         </div>
@@ -113,7 +115,7 @@ const subirContrato = async () => {
           :class="{
             'text-red-500': colorMensaje === 'red',
             'text-green-600': colorMensaje === 'green',
-            'text-black': colorMensaje === 'black'
+            'text-black': colorMensaje === 'black',
           }"
         >
           {{ mensaje }}
@@ -126,7 +128,6 @@ const subirContrato = async () => {
         >
           Guardar Contrato
         </button>
-
       </form>
     </div>
   </div>

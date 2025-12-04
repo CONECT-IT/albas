@@ -39,10 +39,7 @@ defineExpose({
       <p class="text-sm mb-6">¿Deseas guardar esta información?</p>
 
       <div class="flex justify-between">
-        <button
-          @click="cerrar"
-          class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-        >
+        <button @click="cerrar" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
           Cancelar
         </button>
 
@@ -54,6 +51,5 @@ defineExpose({
         </button>
       </div>
     </div>
-
   </div>
 </template>

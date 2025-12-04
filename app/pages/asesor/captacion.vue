@@ -54,7 +54,7 @@ const pasarLeadACitas = (lead: any) => {
   });
 
   // Remover de leads
-  leads.value = leads.value.filter(l => l.id !== lead.id);
+  leads.value = leads.value.filter((l) => l.id !== lead.id);
 };
 
 // PASAR DE CITAS → CLIENTES
@@ -75,7 +75,7 @@ const pasarCitaAClientes = (cita: any) => {
 const store = {
   leads,
   citas,
-  clientes
+  clientes,
 };
 
 const eliminarItem = (tipo: "leads" | "citas" | "clientes", id: number) => {
@@ -87,9 +87,6 @@ const eliminarItem = (tipo: "leads" | "citas" | "clientes", id: number) => {
 const estados = ["Seguimiento", "Cierre", "No responde"];
 const estadosCitas = ["realizado", "reprogramo", "cancelo"];
 const VendidoClientes = ["seleccionar", "No", "Si"];
-
-
-
 </script>
 <!-------------------------------------------------------------PARTE VISUAL EN PANTALLA ---------------------------------------------------------------->
 <template>
@@ -143,20 +140,38 @@ const VendidoClientes = ["seleccionar", "No", "Si"];
       </button>
     </div>
 
-<!------------------------------------------------------TABLA DE LEADS----------------------------------------------------------------------->
+    <!------------------------------------------------------TABLA DE LEADS----------------------------------------------------------------------->
     <div v-if="currentTab === 'Leads'">
-      <TablaLeads :leads="leads" :estados="estados" @guardar="pasarLeadACitas" @eliminar="(id) => eliminarItem('leads', id)" />
+      <TablaLeads
+        :leads="leads"
+        :estados="estados"
+        @guardar="pasarLeadACitas"
+        @eliminar="(id) => eliminarItem('leads', id)"
+      />
     </div>
-<!------------------------------------------------------TABLA DE CITAS----------------------------------------------------------------------->
+    <!------------------------------------------------------TABLA DE CITAS----------------------------------------------------------------------->
     <div v-else-if="currentTab === 'Citas'">
-      <TablaCitas :citas="citas" :estadosCitas="estadosCitas" @guardar="pasarCitaAClientes" @eliminar="(id) => eliminarItem('citas', id)" />
+      <TablaCitas
+        :citas="citas"
+        :estadosCitas="estadosCitas"
+        @guardar="pasarCitaAClientes"
+        @eliminar="(id) => eliminarItem('citas', id)"
+      />
     </div>
-<!------------------------------------------------------TABLA DE CLIENTES----------------------------------------------------------------------->
+    <!------------------------------------------------------TABLA DE CLIENTES----------------------------------------------------------------------->
     <div v-else-if="currentTab === 'Clientes'">
-      <TablaClientes :clientes="clientes" :VendidoClientes="VendidoClientes" @eliminar="(id) => eliminarItem('clientes', id)" />
+      <TablaClientes
+        :clientes="clientes"
+        :VendidoClientes="VendidoClientes"
+        @eliminar="(id) => eliminarItem('clientes', id)"
+      />
     </div>
 
     <!-- Modal Agregar Nuevo Lead -->
-    <NuevoLeadForm v-if="showNuevoLeadForm" @close="showNuevoLeadForm = false" @crear="nuevoLeadForm" />
+    <NuevoLeadForm
+      v-if="showNuevoLeadForm"
+      @close="showNuevoLeadForm = false"
+      @crear="nuevoLeadForm"
+    />
   </div>
 </template>

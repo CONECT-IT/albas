@@ -6,7 +6,9 @@
         @click="cerrar"
         class="absolute top-4 right-4 text-2xl leading-none"
         aria-label="Cerrar"
-      >✕</button>
+      >
+        ✕
+      </button>
 
       <!-- Título -->
       <h2 class="text-2xl font-semibold mb-1">Observaciones</h2>
@@ -18,11 +20,7 @@
         class="w-full bg-gray-200 px-4 py-2 rounded-lg mb-6 outline-none cursor-pointer"
       >
         <option disabled value="">Seleccione una propiedad</option>
-        <option
-          v-for="(item, idx) in listaObservaciones"
-          :key="idx"
-          :value="item.propiedad"
-        >
+        <option v-for="(item, idx) in listaObservaciones" :key="idx" :value="item.propiedad">
           {{ item.propiedad }}
         </option>
       </select>
@@ -36,33 +34,28 @@
 
       <!-- Botón Cerrar -->
       <div class="flex justify-end">
-        <button
-          @click="cerrar"
-          class="px-6 py-2 rounded-lg border"
-        >
-          Cerrar
-        </button>
+        <button @click="cerrar" class="px-6 py-2 rounded-lg border">Cerrar</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from "vue";
 
 const props = defineProps({
   // opcional: lista de observaciones en formato { propiedad: string, comentario: string }
   observaciones: {
     type: Array as () => { propiedad: string; comentario: string }[] | undefined,
-    required: false
+    required: false,
   },
   // opcional: propiedad a preseleccionar
-  propiedadInicial: { type: String, required: false, default: '' }
+  propiedadInicial: { type: String, required: false, default: "" },
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(["close"]);
 
-const propiedadSeleccionada = ref('');
+const propiedadSeleccionada = ref("");
 
 // Si no pasan observaciones, usamos datos ficticios
 const listaObservaciones = computed(() => {
@@ -70,9 +63,18 @@ const listaObservaciones = computed(() => {
     return props.observaciones;
   }
   return [
-    { propiedad: 'Vista Hermosa', comentario: 'Cliente necesita financiamiento. Revisar opciones bancarias disponibles.' },
-    { propiedad: 'Residencial Los Pinos', comentario: 'Enviar documentación faltante: copia DNI y boleta de servicio.' },
-    { propiedad: 'Terreno La Pradera', comentario: 'Verificar linderos y metraje exacto antes de ofertar.' }
+    {
+      propiedad: "Vista Hermosa",
+      comentario: "Cliente necesita financiamiento. Revisar opciones bancarias disponibles.",
+    },
+    {
+      propiedad: "Residencial Los Pinos",
+      comentario: "Enviar documentación faltante: copia DNI y boleta de servicio.",
+    },
+    {
+      propiedad: "Terreno La Pradera",
+      comentario: "Verificar linderos y metraje exacto antes de ofertar.",
+    },
   ];
 });
 
@@ -83,7 +85,7 @@ onMounted(() => {
   } else if (listaObservaciones.value.length > 0) {
     propiedadSeleccionada.value = listaObservaciones.value[0].propiedad;
   } else {
-    propiedadSeleccionada.value = '';
+    propiedadSeleccionada.value = "";
   }
 });
 
@@ -92,36 +94,43 @@ watch(
   () => listaObservaciones.value,
   (newVal) => {
     if (!newVal || newVal.length === 0) {
-      propiedadSeleccionada.value = '';
+      propiedadSeleccionada.value = "";
       return;
     }
-    const existe = newVal.some(o => o.propiedad === propiedadSeleccionada.value);
+    const existe = newVal.some((o) => o.propiedad === propiedadSeleccionada.value);
     if (!existe) {
       propiedadSeleccionada.value = newVal[0].propiedad;
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 // Computed que devuelve el comentario de la propiedad seleccionada
 const comentarioMostrado = computed(() => {
-  if (!propiedadSeleccionada.value) return '';
-  const found = listaObservaciones.value.find(o => o.propiedad === propiedadSeleccionada.value);
-  return found ? found.comentario : '';
+  if (!propiedadSeleccionada.value) return "";
+  const found = listaObservaciones.value.find((o) => o.propiedad === propiedadSeleccionada.value);
+  return found ? found.comentario : "";
 });
 
 function cerrar() {
-  emit('close');
+  emit("close");
 }
 </script>
 
 <style scoped>
 /* scrollbar opcional */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { background: #d1d1d1; border-radius: 10px; }
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d1d1;
+  border-radius: 10px;
+}
 
 /* responsive pequeño */
 @media (max-width: 780px) {
-  :root .w-\[750px\] { width: calc(100% - 32px); }
+  :root .w-\[750px\] {
+    width: calc(100% - 32px);
+  }
 }
 </style>

@@ -40,18 +40,27 @@ export const gestionCompradorRepository = {
     return gestion ?? null;
   },
 
-  async create(data: { id_usuario: number; id_persona: number; estado_comprador?: string; observacion?: string }) {
+  async create(data: {
+    id_usuario: number;
+    id_persona: number;
+    estado_comprador?: string;
+    observacion?: string;
+  }) {
     const db = usePostgres();
     const [gestion] = await db`
       INSERT INTO usuario_comprador (id_usuario, id_persona, estado_comprador, observacion)
-      VALUES (${data.id_usuario}, ${data.id_persona}, ${data.estado_comprador ?? 'Aún no se ha contactado'}, ${data.observacion ?? null})
+      VALUES (${data.id_usuario}, ${data.id_persona}, ${data.estado_comprador ?? "Aún no se ha contactado"}, ${data.observacion ?? null})
       ON CONFLICT DO NOTHING
       RETURNING *
     `;
     return gestion ?? null;
   },
 
-  async update(usuarioId: number, personaId: number, data: Partial<{ estado_comprador: string; observacion: string }>) {
+  async update(
+    usuarioId: number,
+    personaId: number,
+    data: Partial<{ estado_comprador: string; observacion: string }>,
+  ) {
     const db = usePostgres();
     const [gestion] = await db`
       UPDATE usuario_comprador SET ${db(data)}

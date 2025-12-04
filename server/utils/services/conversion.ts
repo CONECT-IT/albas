@@ -1,9 +1,5 @@
 export const conversionService = {
-  async convertir(data: {
-    id_persona: number;
-    id_usuario: number;
-    tipo_nuevo: "Cliente";
-  }) {
+  async convertir(data: { id_persona: number; id_usuario: number; tipo_nuevo: "Cliente" }) {
     // 1. Obtener persona actual
     const persona = await personaRepository.findById(data.id_persona);
     if (!persona) {

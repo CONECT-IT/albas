@@ -1,7 +1,15 @@
 export default defineEventHandler(async (event) => {
   const user = event.context.user;
   const body = await readBody(event);
-  const { id_contrato, direccion, descripcion, medidas, servicios_basicos, precio_negociable, partida_registral } = body;
+  const {
+    id_contrato,
+    direccion,
+    descripcion,
+    medidas,
+    servicios_basicos,
+    precio_negociable,
+    partida_registral,
+  } = body;
 
   if (!id_contrato) {
     throw createError({ statusCode: 400, message: "id_contrato es requerido" });

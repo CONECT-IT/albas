@@ -32,7 +32,12 @@ export const conversionRepository = {
     `;
   },
 
-  async create(data: { id_persona: number; id_usuario: number; tipo_anterior: string; tipo_nuevo: string }) {
+  async create(data: {
+    id_persona: number;
+    id_usuario: number;
+    tipo_anterior: string;
+    tipo_nuevo: string;
+  }) {
     const db = usePostgres();
     const [conversion] = await db`
       INSERT INTO conversiones (id_persona, id_usuario, tipo_anterior, tipo_nuevo)

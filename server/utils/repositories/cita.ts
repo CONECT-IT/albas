@@ -59,7 +59,10 @@ export const citaRepository = {
     return cita;
   },
 
-  async update(id: number, data: Partial<{ fecha_agendada: string; observacion: string; estado_visita_guiada: string }>) {
+  async update(
+    id: number,
+    data: Partial<{ fecha_agendada: string; observacion: string; estado_visita_guiada: string }>,
+  ) {
     const db = usePostgres();
     const [cita] = await db`
       UPDATE citas SET ${db(data)}
