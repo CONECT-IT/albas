@@ -36,7 +36,7 @@ export const captacionService = {
 
   async leadRepetido(celular: string) {
     const persona = await personaRepository.findByNumber(celular);
-    return { persona: persona, esRepetido: (persona) ? true : false};
+    return { persona: persona, esRepetido: persona ? true : false };
   },
 
   async leadActivo(id_lead: number) {

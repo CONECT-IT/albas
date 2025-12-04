@@ -36,9 +36,8 @@ export const asesorService = {
   async rendimientoAsesor(asesorId: number) {
     const total_leads = await gestionVendedorRepository.findByAsesor(asesorId);
     const total_clientes = total_leads.filter((tl: any) => tl.tipo === "Cliente");
-    const rendimiento = (total_leads.length > 0)
-      ? (total_clientes.length / total_leads.length) * 100
-      : 0;
+    const rendimiento =
+      total_leads.length > 0 ? (total_clientes.length / total_leads.length) * 100 : 0;
     return rendimiento;
   },
 

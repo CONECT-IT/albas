@@ -19,7 +19,7 @@ export const gestionVendedorRepository = {
     `;
   },
 
-  async getCargaVentas(){
+  async getCargaVentas() {
     const db = usePostgres();
     return await db`
       SELECT u.id_usuario, A.total_clientes
