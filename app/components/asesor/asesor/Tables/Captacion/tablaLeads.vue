@@ -1,20 +1,5 @@
 <script setup lang="ts">
 import { ref } from "vue";
-
-//--------------------------------Importar todos los formularios------------------------------
-
-import PropiedadForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import EditarPropiedadForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import VerPropiedadForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import VisitaForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import EditarVisitaForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import VerVisitaForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import ObservacionForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import EditarObservacionForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import VerObservacionForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import EditarLeadForm from "~/components/asesor/asesor/Forms/captacionForms/NuevoLeadForm.vue";
-import ConfirmarGuardar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarGuardar.vue";
-import ConfirmarEliminar from "~/components/asesor/asesor/Forms/captacionForms/ConfirmarEliminar.vue";
 // Props
 interface Lead {
   id: number;
@@ -144,7 +129,6 @@ const closeForm = (formType: string) => {
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
           </button>
-
           <!-- Editar Propiedad -->
           <button
             @click="openForm(lead, 'editarPropiedad')"

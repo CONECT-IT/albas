@@ -1,7 +1,6 @@
-export const captacionService = {
-  // === LEADS VENDEDORES ===
+export const ventasService = {
   async listarLeads(usuarioId: number) {
-    const gestiones = await gestionVendedorRepository.findByAsesor(usuarioId);
+    const gestiones = await gestionCompradorRepository.findByAsesor(usuarioId);
     return gestiones.filter((g: any) => g.tipo === "Lead Alvas" || g.tipo === "Lead Propio");
   },
 
@@ -18,12 +17,12 @@ export const captacionService = {
       tipo: data.tipo,
     });
 
-    const cat = await categoriaRepository.findByNombre("Vendedor");
+    const cat = await categoriaRepository.findByNombre("Comprador");
     if (cat) {
       await categoriaRepository.asignarCategoria(persona.id_persona, cat.id_categoria);
     }
 
-    await gestionVendedorRepository.create({
+    await gestionCompradorRepository.create({
       id_usuario: data.id_usuario,
       id_persona: persona.id_persona,
       observacion: data.observacion,
@@ -32,45 +31,9 @@ export const captacionService = {
     return persona;
   },
 
-  async leadRepetido(celular: string) {
-    const persona = (await personaRepository.findByNumber(celular)) as any | null;
-    return { persona, esRepetido: persona !== null };
-  },
-
-  async leadActivo(id_lead: number) {
-    const lead = (await gestionVendedorRepository.findByPersonaActiva(id_lead)) as any[] | null;
-    const safeLead = Array.isArray(lead) ? lead : [];
-    return { lead: safeLead, esActivo: safeLead.length > 0 };
-  },
-
-  // === CLIENTES VENDEDORES ===
   async listarClientes(usuarioId: number) {
-    const db = usePostgres();
-    return await db`
-      SELECT 
-        uv.id_usuario,
-        uv.id_persona,
-        uv.estado_vendedor,
-        uv.observacion,
-        p.nombre,
-        p.celular,
-        p.tipo,
-        p.fecha_captacion,
-        c.id_contrato,
-        c.fecha_emision,
-        pr.id_propiedad,
-        pr.direccion,
-        pr.descripcion,
-        pr.medidas,
-        pr.servicios_basicos,
-        pr.precio_negociable,
-        pr.partida_registral
-      FROM usuario_vendedor uv
-      INNER JOIN personas p ON uv.id_persona = p.id_persona
-      LEFT JOIN contrato c ON c.id_persona = p.id_persona
-      LEFT JOIN propiedad pr ON c.id_propiedad = pr.id_propiedad
-      WHERE uv.id_usuario = ${usuarioId} AND p.tipo = 'Cliente'
-    `;
+    const gestiones = await gestionCompradorRepository.findByAsesor(usuarioId);
+    return gestiones.filter((g: any) => g.tipo === "Cliente");
   },
 
   async registrarCliente(data: {
@@ -85,12 +48,12 @@ export const captacionService = {
       tipo: "Cliente",
     });
 
-    const cat = await categoriaRepository.findByNombre("Vendedor");
+    const cat = await categoriaRepository.findByNombre("Comprador");
     if (cat) {
       await categoriaRepository.asignarCategoria(persona.id_persona, cat.id_categoria);
     }
 
-    await gestionVendedorRepository.create({
+    await gestionCompradorRepository.create({
       id_usuario: data.id_usuario,
       id_persona: persona.id_persona,
       observacion: data.observacion,
@@ -99,9 +62,8 @@ export const captacionService = {
     return persona;
   },
 
-  // === REFERIDOS VENDEDORES ===
   async listarReferidos(usuarioId: number) {
-    const gestiones = await gestionVendedorRepository.findByAsesor(usuarioId);
+    const gestiones = await gestionCompradorRepository.findByAsesor(usuarioId);
     return gestiones.filter((g: any) => g.tipo === "Referido");
   },
 
@@ -117,12 +79,12 @@ export const captacionService = {
       tipo: "Referido",
     });
 
-    const cat = await categoriaRepository.findByNombre("Vendedor");
+    const cat = await categoriaRepository.findByNombre("Comprador");
     if (cat) {
       await categoriaRepository.asignarCategoria(persona.id_persona, cat.id_categoria);
     }
 
-    await gestionVendedorRepository.create({
+    await gestionCompradorRepository.create({
       id_usuario: data.id_usuario,
       id_persona: persona.id_persona,
       observacion: data.observacion,
@@ -132,7 +94,7 @@ export const captacionService = {
   },
 
   async verificarGestion(usuarioId: number, personaId: number) {
-    const gestion = await gestionVendedorRepository.findOne(usuarioId, personaId);
+    const gestion = await gestionCompradorRepository.findOne(usuarioId, personaId);
     if (!gestion) {
       throw createError({ statusCode: 404, message: "No tienes acceso a esta persona" });
     }
@@ -151,10 +113,10 @@ export const captacionService = {
   async actualizarGestion(
     usuarioId: number,
     personaId: number,
-    data: Partial<{ estado_vendedor: string; observacion: string }>,
+    data: Partial<{ estado_comprador: string; observacion: string }>,
   ) {
     await this.verificarGestion(usuarioId, personaId);
-    return await gestionVendedorRepository.update(usuarioId, personaId, data);
+    return await gestionCompradorRepository.update(usuarioId, personaId, data);
   },
 
   async obtenerGestion(usuarioId: number, personaId: number) {
@@ -163,6 +125,27 @@ export const captacionService = {
 
   async eliminarGestion(usuarioId: number, personaId: number) {
     await this.verificarGestion(usuarioId, personaId);
-    return await gestionVendedorRepository.delete(usuarioId, personaId);
+    return await gestionCompradorRepository.delete(usuarioId, personaId);
+  },
+
+  // === INTERESADOS ===
+  async listarInteresadosPorPropiedad(propiedadId: number) {
+    return await interesadoRepository.findByPropiedad(propiedadId);
+  },
+
+  async agregarInteresado(propiedadId: number, personaId: number) {
+    return await interesadoRepository.create({ id_propiedad: propiedadId, id_persona: personaId });
+  },
+
+  async marcarVendido(propiedadId: number, personaId: number) {
+    return await interesadoRepository.update(propiedadId, personaId, { vendido: true });
+  },
+
+  async marcarSeparado(propiedadId: number, personaId: number, separado: boolean) {
+    return await interesadoRepository.update(propiedadId, personaId, { separado });
+  },
+
+  async removerInteresado(propiedadId: number, personaId: number) {
+    return await interesadoRepository.delete(propiedadId, personaId);
   },
 };

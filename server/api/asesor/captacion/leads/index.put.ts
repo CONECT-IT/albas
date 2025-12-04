@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
     const personaUpdate: Record<string, string> = {};
     if (nombre) personaUpdate.nombre = nombre;
     if (celular) personaUpdate.celular = celular;
-    await captacionService.actualizarPersona(id_persona, personaUpdate);
+    await captacionService.actualizarPersona(user.id, id_persona, personaUpdate);
   }
 
   if (estado_vendedor || observacion) {
